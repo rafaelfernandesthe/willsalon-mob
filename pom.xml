@@ -75,12 +75,6 @@
 			<url>http://nakedobjects.sourceforge.net/m2-repo/snapshot/</url>
 		</repository>
 
-		<!-- PRIMEFACES THEMES -->
-		<repository>
-			<id>primefaces-themes</id>
-			<url>http://repository.primefaces.org/</url>
-		</repository>
-
 		<!-- JBOSS -->
 		<repository>
 			<id>JBoss Repository</id>
