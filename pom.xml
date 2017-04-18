@@ -202,8 +202,8 @@
 		
 		
 		<dependency>  
-			<groupId>org.primefaces.extensions</groupId>  
-			<artifactId>all-themes</artifactId>   
+			<groupId>org.primefaces.themes</groupId>  
+			<artifactId>eggplant</artifactId>   
 			<version>1.0.8</version>  
 		</dependency>  
 
