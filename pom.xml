@@ -75,12 +75,6 @@
 			<url>http://nakedobjects.sourceforge.net/m2-repo/snapshot/</url>
 		</repository>
 
-		<!-- NIGHTLABS -->
-		<repository>
-			<id>nightlabs</id>
-			<url>http://dev.nightlabs.org/maven-repository/repo/</url>
-		</repository>
-
 		<!-- PRIMEFACES THEMES -->
 		<repository>
 			<id>primefaces-themes</id>
