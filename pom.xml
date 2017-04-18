@@ -80,6 +80,11 @@
 			<id>JBoss Repository</id>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
+		
+		<repository>
+			<id>Primefaces Repository</id>
+			<url>http://repository.primefaces.org/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
