@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+	
+	<ui:define name="content">
+	
+	<h:outputScript>
+	<!-- Facebook Pixel Code -->
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '245786829216560'); // Insert your pixel ID here.
+fbq('track', 'PageView');
+<!-- DO NOT MODIFY -->
+<!-- End Facebook Pixel Code -->
+	</h:outputScript>
+	
+	<h:form id="newClientForm">
+	
+			<f:metadata>
+				<f:viewParam name="clientView" value="#{clientAddEditMB.clientView}"/>
+				<f:viewParam name="phone" value="#{clientAddEditMB.contextPhone}" />
+				<f:viewParam name="birthDate" value="#{clientAddEditMB.contextBirthDate}" />
+			</f:metadata>
+												
+			<h:messages errorClass="error"/>
+			<div class="ui-grid ui-grid-responsive">
+				<p:panel header="#{clientAddEditMB.title} #{labels.client}">
+					<p:outputLabel value="Você ainda não possui cadastro!" style="color:red"/> 
+					<p:outputLabel value="Por favor, finalize seu cadastro informando seu nome."/>
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_name" value="#{labels.client_name}: " />
+						<p:inputText styleClass="ui-grid-col-10" id="client_name" value="#{clientAddEditMB.client.name}" required="true" />
+					</div>
+	
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_phone" value="#{labels.client_phone}(Somente números): " />
+						<p:inputMask styleClass="ui-grid-col-3" widgetVar="widget_client_phone" id="client_phone" value="#{clientAddEditMB.client.phone}" required="true" mask="(99) 9999-9999?9"/>
+						
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_mail" value="#{labels.client_mail}: " />
+						<p:inputText styleClass="ui-grid-col-5" id="client_mail" value="#{clientAddEditMB.client.mail}" type="email"/>
+					</div>
+	
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_birthDate" value="#{labels.client_birthDate}: " />
+						<p:calendar styleClass="ui-grid-col-3" id="client_birthDate" value="#{clientAddEditMB.client.birthDate}" required="true" pattern="dd/MM/yyyy" navigator="true" mask="99/99/9999" locale="pt_BR" yearRange="c-80:c+0"/>
+						
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_address" value="#{labels.client_address}: " />
+						<p:inputText styleClass="ui-grid-col-5" id="client_address" value="#{clientAddEditMB.client.address}" />
+					</div>
+					
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_sexOrientation" value="#{labels.client_sexOrientation}: " />
+						<p:selectOneRadio id="client_sexOrientation" value="#{clientAddEditMB.client.sexOrientation}">
+							<f:selectItem itemLabel="Masculino" itemValue="MASC" />
+							<f:selectItem itemLabel="Feminino" itemValue="FEM" />
+						</p:selectOneRadio>
+					</div>
+					
+					<p:commandButton value="#{labels.button_save}"
+						actionListener="#{clientAddEditMB.save}"
+						style="margin: 130 auto;" ajax="false" onsuccess="fbq('track', 'CompleteRegistration');"/>
+				</p:panel>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

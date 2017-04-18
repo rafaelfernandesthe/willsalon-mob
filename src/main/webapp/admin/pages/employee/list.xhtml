@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+		<f:view>
+			<f:event listener="#{employeeMB.onLoad}" type="preRenderView" />
+		</f:view>
+
+		<h:form id="employeeForm">
+		<p:panel id="employeePanel" header="#{labels.employee}">
+				<p:dataTable id="employeeDataTable" widgetVar="dataTable"
+					var="employee" loadingMessage="#{labels.employee_load}"
+					value="#{employeeMB.employees}" paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,20" rowKey="#{employee.id}" tableStyleClass="ui-table-columntoggle">
+				
+					<p:column width="55">
+							<f:facet name="header">
+								<h:outputText value="Ação" />
+							</f:facet>
+							<div style="text-align: center;">
+								<p:commandButton icon="ui-icon-edit"
+									update="employeeDataTable" 
+									action="/admin/pages/employee/addEdit.faces"
+									actionListener="#{employeeAddEditMB.update(employee.id)}" />
+								<p:commandButton icon="ui-icon-delete" 
+								actionListener="#{employeeMB.setIdToDelete(employee.id)}" onclick="PF('dialog_delete').show()"/>
+							</div>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee_name}" />
+						</f:facet>
+						<h:outputText value="#{employee.name}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee_phone}" />
+						</f:facet>
+						<h:outputText value="#{employee.phone}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee_mail}" />
+						</f:facet>
+						<h:outputText value="#{employee.mail}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee_birthDate}" />
+						</f:facet>
+						<h:outputText value="#{employee.birthDateFormat}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee_cpf}" />
+						</f:facet>
+						<h:outputText value="#{employee.cpf}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee_rg}" />
+						</f:facet>
+						<h:outputText value="#{employee.rg}" />
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+				<p:dialog id="dialog_delete" widgetVar="dialog_delete" closable="false" resizable="false" appendTo="@(body)" 
+					position="center" modal="true" width="200" height="70" header="Confirmar?">
+						<p><h:outputText value="Deseja Excluir?" /></p>
+						<div style="text-align: center;">
+							<p:commandButton value="Sim" onclick="PF('dialog_delete').hide()" 
+							actionListener="#{employeeMB.delete}" process="@this" update="employeeForm"/>
+							<p:commandButton value="Não" type="button" onclick="PF('dialog_delete').hide()" />
+						</div>
+				</p:dialog>
+
+	</ui:define>
+</ui:composition>

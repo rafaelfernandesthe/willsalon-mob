@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="schedulingForm">
+		
+		<p:panel id="schedulingPanel" header="Consultar #{labels.scheduling}">
+					
+				<div class="ui-grid-row">
+					<p:outputLabel styleClass="ui-grid-col-2" for="employee" value="#{labels.employee}"/>
+					<p:autoComplete styleClass="ui-grid-col-8" id="employee" value="#{schedulingMB.employeeFilter}" completeMethod="#{schedulingMB.autocompleteEmployee}" minQueryLength="3" 
+					converter="autocompleteConverter" var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true" required="true"/>
+				</div>
+				<div class="ui-grid-row">
+					<p:outputLabel styleClass="ui-grid-col-2" for="client" value="#{labels.client}"/>
+					<p:autoComplete styleClass="ui-grid-col-8" id="client" value="#{schedulingMB.clientFilter}" completeMethod="#{schedulingMB.autocompleteClient}" minQueryLength="3" 
+					converter="autocompleteConverter" var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true"/>
+				</div>
+				<div class="ui-grid-row">
+					<div class="ui-grid-row">
+						<p:outputLabel for="date" value="#{labels.scheduling_date}"/>
+						<p:calendar id="date" value="#{schedulingMB.dateFilter}" locale="pt_BR" pattern="dd/MM/yyyy" >
+						</p:calendar>
+					</div>
+				</div>
+				
+				<p:commandButton value="Filtrar" process="@form" actionListener="#{schedulingMB.find}" update="schedulingDataTable" ajax="true"/>
+
+				<p:dataTable id="schedulingDataTable" widgetVar="dataTable" selectionMode="single" emptyMessage="Nenhum agendamento encontrado"
+					var="scheduling" loadingMessage="#{labels.scheduling_load}" selection="#{schedulingMB.itemRowSelected}"
+					value="#{schedulingMB.schedulings}" paginator="false" rowKey="#{scheduling.id}" tableStyleClass="ui-table-columntoggle">
+
+					<p:ajax event="rowSelect" listener="#{schedulingMB.showQuestionDialog}" />
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.scheduling_dateHour}" />
+						</f:facet>
+						<h:outputText
+							value="#{schedulingMB.dateFilter != null ? scheduling.initialDateFormatWithoutDay : scheduling.initialDateFormatWithDayAndHours}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client}" />
+						</f:facet>
+						<h:outputText value="#{scheduling.client.name}" style="#{(scheduling.wasRepetition) ? 'color:red' : ''}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client_phone}" />
+						</f:facet>
+						<h:outputText value="#{scheduling.client.phone}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panel>
+		</h:form>
+	
+		<p:dialog id="dialog_delete" widgetVar="dialog_delete" header="Confirmar?">
+			<p:outputPanel id="outputPanelDelete" rendered="#{!schedulingMB.isDeleteMany}">
+				<p>
+					<h:outputText value="Deseja Excluir?" />
+				</p>
+				<p:commandButton value="Sim" onclick="PF('dialog_delete').hide()"
+					actionListener="#{schedulingMB.delete}" process="@this"
+					update="schedulingForm:schedulingDataTable" ajax="true" />
+				
+				<p:commandButton value="Não" type="button"
+					onclick="PF('dialog_delete').hide()" />
+			</p:outputPanel>
+			<p:outputPanel id="outputPanelDeleteMany" rendered="#{schedulingMB.isDeleteMany}">
+				<h:form>
+					<p:commandButton rendered="#{schedulingMB.isDeleteMany}" id="deleteMany" value="Excluir Todos" onclick="PF('dialog_delete').hide()"
+					actionListener="#{schedulingMB.deleteMany}" process="dataTableToDelete @this" 
+					update="schedulingForm:schedulingDataTable" ajax="true"/>
+					
+					<p:dataTable id="dataTableToDelete" value="#{schedulingMB.schedulingRepeatedList}" var="item" emptyMessage="Não foram encontrados agendamentos futuros para esse item">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Horários Futuros" />
+							</f:facet>
+							<h:outputText value="#{item.initialDateFormatWithDayAndHours}" />
+						</p:column>
+					</p:dataTable>
+				</h:form>		
+			</p:outputPanel>
+		</p:dialog>
+		
+		<p:dialog id="dialog_show" widgetVar="dialog_show" header="Visualizar">
+			<p:outputPanel>
+					<p:outputLabel value="#{labels.employee}"/>
+					<p:inputText value="#{schedulingMB.schedulingShow.employee.name}"  disabled="true"/>
+					
+					<p:outputLabel value="#{labels.client}"/>
+					<p:inputText value="#{schedulingMB.schedulingShow.client.name}" disabled="true"/>
+					<p:inputText value="#{schedulingMB.schedulingShow.client.phone}" disabled="true"/>
+					
+					<p:outputLabel value="#{labels.scheduling_date}"/>
+					<p:inputText value="#{schedulingMB.schedulingShow.initialDateFormatWithDayAndHours}" disabled="true"/>
+					
+					<p:outputLabel value="#{labels.scheduling_finalDatePrevision}"/>
+					<p:inputText value="#{schedulingMB.schedulingShow.finalDatePrevisionFormatWithoutDay}" disabled="true"/>
+					
+					<p:outputLabel value="#{labels.procedure}"/>
+					<p:inputTextarea value="#{schedulingMB.schedulingShow.procedureList}" disabled="true" />
+					<p:inputTextarea value="#{schedulingMB.schedulingShow.history}" disabled="true" />
+			</p:outputPanel>
+			<p:commandButton value="Fechar" type="button" 
+				onclick="PF('dialog_show').hide()" ajax="false" />
+		</p:dialog>
+		
+		<p:dialog id="dialog_question" widgetVar="dialog_question" header="Ação">
+			<p>
+				<h:outputText value="O que deseja Fazer?" />
+				<h:form>
+					<p:commandButton icon="ui-icon-eye" value="Visualizar" onclick="PF('dialog_question').hide()" ajax="true" 
+					actionListener="#{schedulingMB.show(schedulingMB.schedulingShow.id)}" process="@this" />
+				</h:form>
+				
+				<p:commandButton rendered="#{menuMB.isAdmin()}" icon="ui-icon-delete" value="Excluir" type="button" onclick="PF('dialog_question').hide();PF('dialog_delete').show()" ajax="false" />
+				
+				<h:form>
+					<p:commandButton rendered="#{schedulingMB.itemRowSelected.wasRepetition and menuMB.isAdmin()}" icon="ui-icon-trash" value="Excluir Repetições" 
+					onclick="PF('dialog_question').hide()" ajax="true" 
+					actionListener="#{schedulingMB.loadSchedulingRepeatedList(schedulingMB.idToDelete)}" process="@this" />
+				</h:form>
+			</p>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>

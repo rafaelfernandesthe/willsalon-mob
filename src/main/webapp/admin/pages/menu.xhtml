@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<body>
+		<ui:composition>
+			<div id="mainMenu">
+				<h:form>
+					<p:menu>
+						<p:menuitem value="Agendar" url="/admin/pages/scheduling/addEdit.faces" 
+									ajax="false"  icon="ui-icon-calendar"/>
+									
+						<p:menuitem value="Ver Agendamentos" url="/admin/pages/scheduling/list.faces" 
+									ajax="false"  icon="ui-icon-calendar"/>
+						
+						<p:menuitem value="Cliente" url="/admin/pages/client/addEdit.faces"
+					             	ajax="false" icon="ui-icon-plus"/>
+
+						<p:menuitem value="Profissional" url="/admin/pages/employee/addEdit.faces"
+					             	ajax="false" icon="ui-icon-plus"/>
+
+						<p:menuitem value="Serviço" url="/admin/pages/procedure/addEdit.faces"
+					             	ajax="false" icon="ui-icon-plus"/>
+					    
+			            <p:menuitem value="#{labels.menu_user}" url="/admin/pages/user/list.faces"
+				    	        	ajax="false" icon="ui-icon-user" rendered="#{menuMB.isAdmin()}" />
+				    	        	
+	    	        	<p:menuitem value="#{labels.menu_upload_img}" url="/admin/pages/uploadImg/list.faces"
+				    	        	ajax="false" icon="ui-icon-grid" rendered="#{menuMB.isAdmin()}" />
+				    	        			
+						<p:menuitem value="#{labels.logout}" url="/j_spring_security_logout"
+					             	ajax="false" icon="ui-icon-power"/>
+				    </p:menu>
+			    </h:form>
+			</div>
+		</ui:composition>
+	</body>
+</html>

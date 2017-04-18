@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+		<p:button value="Novo Agendamento" href="/pages/clientScheduling/addScheduling.faces?clientId=#{clientSchedulingMB.clientId}"  ajax="false"  icon="ui-icon-plus" />
+		<h:form id="schedulingForm">
+		
+			<f:metadata>
+				<f:viewParam name="clientId" value="#{clientSchedulingMB.clientId}" />
+				<f:event listener="#{clientSchedulingMB.onLoad}" type="preRenderView" />
+			</f:metadata>
+		
+		<p:panel id="schedulingPanel" header="Meus #{labels.scheduling}">
+				<p:outputLabel value="Cancelamento ou Alteração de agendamento, entre em contato por Tel: 2809-1414 WhatsApp: 97351-1138 ou pessoalmente!" style="color:red"/>
+				<p:dataTable id="schedulingDataTable" widgetVar="dataTable" selectionMode="single" emptyMessage="Nenhum agendamento encontrado"
+					var="scheduling" loadingMessage="#{labels.scheduling_load}" 
+					value="#{clientSchedulingMB.schedulings}" paginator="false" rowKey="#{scheduling.id}" tableStyleClass="ui-table-columntoggle">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.scheduling_dateHour}" />
+						</f:facet>
+						<h:outputText
+							value="#{scheduling.initialDateFormatWithDayAndHours}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.employee}" />
+						</f:facet>
+						<h:outputText value="#{scheduling.employee.name}"/>
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.procedure}" />
+						</f:facet>
+						<h:outputText value="#{scheduling.procedureList}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panel>
+		</h:form>
+	
+	</ui:define>
+</ui:composition>

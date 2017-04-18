@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+<!-- 		<p:button value="Ver Agendamentos" href="/pages/scheduling/list.faces"  ajax="false"  icon="ui-icon-search" /> -->
+		<h:form id="formScheduling">
+			
+			<h:messages errorClass="error" id="error"/>
+			<h:inputHidden value="#{schedulingAddEditMB.scheduling.id}" />
+			
+			<div class="ui-grid ui-grid-responsive">
+				<p:panel id="panelScheduling" header="#{labels.scheduling}">
+					<p:accordionPanel id="accordion_1" dynamic="true" widgetVar="accordion_1">
+    					<p:tab id="tab_1" title="Cliente e Profissional">
+							<div id="div_client" class="ui-grid-row">
+								<p:outputLabel styleClass="ui-grid-col-2" for="client" value="#{labels.client}"/>
+								<p:autoComplete styleClass="ui-grid-col-8" id="client" value="#{schedulingAddEditMB.scheduling.client}" completeMethod="#{schedulingAddEditMB.autocompleteClient}" minQueryLength="3" 
+								converter="autocompleteConverter" var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true">
+									<p:ajax event="change" process="buttonNewCliente" update="buttonNewCliente"/>
+									<p:ajax event="itemSelect" process="buttonNewCliente" update="buttonNewCliente"/>
+								</p:autoComplete>
+							</div>
+							
+							<div id="div_button_newCliente" class="ui-grid-row">
+								<p:commandButton id="buttonNewCliente" value="Cadastrar Novo" icon="ui-icon-plus" 
+								disabled="#{!schedulingAddEditMB.showButtonNewClient}" type="button" onclick="PF('dialog_newClient').show()"/>
+							</div>
+							
+							<div id="div_employee" class="ui-grid-row">
+								<p:outputLabel styleClass="ui-grid-col-2" for="employee" value="#{labels.employee}"/>
+								<p:selectOneMenu id="employee" value="#{schedulingAddEditMB.scheduling.employee}" required="true" converter="autocompleteConverter">
+									<f:selectItem value="#{null}" itemLabel="Selecione"/>
+									<f:selectItems  value="#{schedulingAddEditMB.autocompleteEmployee('')}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+									<p:ajax event="itemSelect" listener="#{schedulingAddEditMB.loadDateHourList('1')}" process="@this employee" update="dateHour formScheduling:accordion_1:alert_employee formScheduling:alert_footer"/>
+									<p:ajax event="change" listener="#{schedulingAddEditMB.loadDateHourList('1')}" process="@this employee" update="dateHour formScheduling:accordion_1:alert_employee formScheduling:alert_footer"/>
+								</p:selectOneMenu>
+							</div>
+							<p:outputLabel id="alert_employee" style="color:red"  
+							value="#{schedulingAddEditMB.employeeCanSchedule == true ? '' : 'O profissional '.concat(schedulingAddEditMB.scheduling.employee).concat(' atende somente por ordem de chegada')}"/>
+						</p:tab>
+						<p:tab id="tabServices" title="Serviços">
+							<div class="ui-grid-row">
+								<p:outputLabel styleClass="ui-grid-col-2" for="checkProcedures" value="#{labels.procedure}s"/>
+								<p:selectManyCheckbox id="checkProcedures" value="#{schedulingAddEditMB.selectedProcedureList}" required="true" >
+						            <f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemLabel="#{item}" itemValue="#{item.id}"/>
+								</p:selectManyCheckbox>
+								<p:commandButton value="Confirmar Serviços"  onclick="PF('accordion_1').select(2)"/>
+							</div>
+						</p:tab>
+						
+						<p:tab id="tabDate" title="Data e Horário">
+							<div class="ui-grid-row">
+								<p:outputLabel for="date" value="#{labels.scheduling_date}"/>
+								<p:calendar id="date" value="#{schedulingAddEditMB.scheduling.initialDate}" mode="inline" locale="pt_BR" required="true" 
+								pattern="dd/MM/yyyy" >
+									<p:ajax event="dateSelect" listener="#{schedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour previsionDate"/>
+								</p:calendar>
+							</div>
+							
+							<div class="ui-grid-row">
+								<p:outputLabel styleClass="ui-grid-col-2" for="dateHour" value="#{labels.scheduling_dateHour}"/>
+								<p:selectOneRadio id="dateHour" value="#{schedulingAddEditMB.dateHour}" required="true">
+									<p:ajax event="change" listener="#{schedulingAddEditMB.prepareFinalDateProvision}" process="@this checkProcedures dateHour" update="previsionDate formScheduling:operationButton" />
+						            <f:selectItems value="#{schedulingAddEditMB.dateHourList}" binding="#{schedulingAddEditMB.selectItensDateHourBinding}" />
+						        </p:selectOneRadio>
+						        <p:outputLabel for="previsionDate" value="#{labels.scheduling_finalDatePrevision}"/>
+						        <p:inputText id="previsionDate" value="#{schedulingAddEditMB.scheduling.finalDatePrevisionFormatWithoutDay}" disabled="true"/>
+							</div>
+						</p:tab>
+						
+						<p:tab id="repeatTab" title="Repetição de Agendamento">
+						        <p:outputLabel for="repeatRule" value="Frequência de Agendamento"/>
+						        <p:selectOneMenu id="repeatRule" value="#{schedulingAddEditMB.repeatRule}">
+						        	<f:selectItem itemLabel="Selecione" itemValue="" />
+						        	<f:selectItem itemLabel="1 Semana" itemValue="SEM_1" />
+						        	<f:selectItem itemLabel="2 Semanas" itemValue="SEM_2" />
+						        	<f:selectItem itemLabel="3 Semanas" itemValue="SEM_3" />
+						        	<f:selectItem itemLabel="1 Mês" itemValue="SEM_4" />
+						        </p:selectOneMenu>
+						</p:tab>
+					
+					</p:accordionPanel>
+					<p:outputLabel id="alert_footer" style="color:red"  
+							value="#{schedulingAddEditMB.employeeCanSchedule == true ? '' : 'O profissional '.concat(schedulingAddEditMB.scheduling.employee).concat(' atende somente por ordem de chegada')}"/>
+					<p:commandButton id="operationButton" value="Finalizar Agendamento" actionListener="#{schedulingAddEditMB.save}" process="@form"
+					style="margin: 130 auto;" ajax="false" disabled="#{!schedulingAddEditMB.canFinish || !schedulingAddEditMB.employeeCanSchedule}" />
+					
+				</p:panel>
+			</div>
+			
+			<p:dialog id="dialog_erro" widgetVar="dialog_erro" header="ERRO" closable="false">
+				<p:outputLabel id="internalNotify" value="#{schedulingAddEditMB.internalNotify}"/>
+				<p:commandButton value="OK"  onclick="PF('dialog_erro').hide()" />
+			</p:dialog>
+			
+			<p:dialog id="dialog_saved" widgetVar="dialog_saved" header="Sucesso" closable="false">
+				<p:outputLabel value="Agendamento Realizado"/>
+				<p:button value="OK" href="../home.faces" />
+			</p:dialog>
+			
+			<p:dialog id="dialog_conflit" widgetVar="dialog_conflit" header="Informativo" closable="false">
+				<p:outputLabel value="Os seguintes agendamentos não foram finalizados por motivo de conflitos na data:"/>
+				<p:outputLabel value="#{schedulingAddEditMB.alertMessage}" />
+				<p:outputLabel value="Os demais agendamentos foram salvos com sucesso."/>
+				<p:button value="OK" href="list.faces" />
+			</p:dialog>
+			
+			<p:dialog id="dialog_show" widgetVar="dialog_show" closable="false" resizable="false" appendTo="@(body)" 
+					position="center" modal="true" width="400" height="400" header="Confirmar?">
+					<p><h:outputText value="Confirmar Agendamento?" /></p>
+					<div style="text-align: center;">
+					
+						<p:outputLabel for="finalDatePrevision" value="#{labels_finalDatePrevision}"/>
+						<p:calendar id="finalDatePrevision" value="#{schedulingAddEditMB.scheduling.finalDatePrevision}" disabled="false" locale="pt_BR" pattern="HH:mm" timeOnly="true"/>
+					
+						<p:commandButton value="Sim" onclick="PF('dialog_show').hide()" process="@this"
+						actionListener="#{schedulingAddEditMB.save}" action="list.faces"/>
+						<p:commandButton value="Não" type="button" onclick="PF('dialog_show').hide()" />
+					</div>
+			</p:dialog>
+		</h:form>	
+		
+		<h:form id="form_new_client">
+		<p:dialog id="dialog_newClient" widgetVar="dialog_newClient" closable="true" modal="true" header="Novo Cliente">
+			<h:messages errorClass="error"/>
+				<p:outputLabel styleClass="ui-grid-col-2" for="client_name" value="#{labels.client_name}: " />
+				<p:inputText styleClass="ui-grid-col-10" id="client_name" value="#{schedulingAddEditMB.newClient.name}" required="true" />
+
+				<p:outputLabel styleClass="ui-grid-col-2" for="client_phone" value="#{labels.client_phone}: " />
+				<p:inputText styleClass="ui-grid-col-3" id="client_phone"  value="#{schedulingAddEditMB.newClient.phone}" required="true"/>
+				
+				<p:outputLabel styleClass="ui-grid-col-2" for="client_dayBirthDate" value="#{labels.client_dayBirthDate}: " />
+				<p:selectOneMenu id="client_dayBirthDate" value="#{schedulingAddEditMB.dayBirthDateClient}">
+					<f:selectItems value="#{schedulingAddEditMB.dayList}"/>
+				</p:selectOneMenu>
+				
+				<p:outputLabel styleClass="ui-grid-col-2" for="client_monthBirthDate" value="#{labels.client_monthBirthDate}: " />
+				<p:selectOneMenu id="client_monthBirthDate" value="#{schedulingAddEditMB.monthBirthDateClient}">
+					<f:selectItems value="#{schedulingAddEditMB.monthList}"/>
+				</p:selectOneMenu>
+				
+				<p:outputLabel styleClass="ui-grid-col-2" for="client_yearBirthDate" value="#{labels.client_yearBirthDate}: " />
+				<p:selectOneMenu id="client_yearBirthDate" value="#{schedulingAddEditMB.yearBirthDateClient}">
+					<f:selectItems value="#{schedulingAddEditMB.yearList}"/>
+				</p:selectOneMenu>
+					
+				<p:commandButton value="#{labels.button_save}" actionListener="#{schedulingAddEditMB.addNewClient()}" style="margin: 130 auto;" process="dialog_newClient" />
+			</p:dialog>
+		
+		</h:form>
+	</ui:define>
+</ui:composition>

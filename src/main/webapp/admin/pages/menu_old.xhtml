@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<body>
+		<ui:composition>
+			<div id="mainMenu">
+				<h:form>
+					<p:menu>
+						<p:submenu label="Agenda">
+							<p:menuitem value="Agendar Cliente" url="/pages/scheduling/addEdit.faces" 
+										ajax="false"  icon="ui-icon-calendar"/>
+							<p:menuitem value="Ver Agendamentos" url="/pages/scheduling/list.faces" 
+										ajax="false"  icon="ui-icon-search"/>
+						</p:submenu>
+						
+						<p:submenu label="Cliente">
+							<p:menuitem value="Cadastar Cliente" url="/pages/client/addEdit.faces"
+						             	ajax="false" icon="ui-icon-plus"/>
+			             	<p:menuitem value="Buscar cliente" url="/pages/client/list.faces"
+						             	ajax="false" icon="ui-icon-search"/>
+						</p:submenu>
+
+						<p:submenu label="Funcionário">
+							<p:menuitem value="Cadastar Funcionário" url="/pages/employee/addEdit.faces"
+						             	ajax="false" icon="ui-icon-plus"/>
+			             	<p:menuitem value="Buscar Funcionário" url="/pages/employee/list.faces"
+						             	ajax="false" icon="ui-icon-search"/>
+						</p:submenu>
+
+						<p:submenu label="Procedimento">
+							<p:menuitem value="Cadastar Procedimento" url="/pages/procedure/addEdit.faces"
+						             	ajax="false" icon="ui-icon-plus"/>
+			             	<p:menuitem value="Buscar Procedimento" url="/pages/procedure/list.faces"
+						             	ajax="false" icon="ui-icon-search"/>
+						</p:submenu>
+					             	
+						<p:submenu label="Configuração">
+				            <p:menuitem value="#{labels.menu_user}" url="/pages/user/list.faces"
+					    	        	ajax="false" icon="ui-icon-person" />
+				    	</p:submenu>
+				    	        			
+						<p:menuitem value="#{labels.logout}" url="/j_spring_security_logout"
+					             	ajax="false" icon="ui-icon-wrench"/>
+				    </p:menu>
+			    </h:form>
+			</div>
+		</ui:composition>
+	</body>
+</html>

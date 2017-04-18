@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+		<p:button value="Buscar cliente" href="/admin/pages/client/list.faces" icon="ui-icon-search" />
+		
+		<h:form>
+												
+			<h:messages errorClass="error"/>
+			<h:inputHidden value="#{clientAddEditMB.client.id}" />
+
+			<div class="ui-grid ui-grid-responsive">
+				<p:panel header="#{clientAddEditMB.title} #{labels.client}">
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_name" value="#{labels.client_name}: " />
+						<p:inputText styleClass="ui-grid-col-10" id="client_name" value="#{clientAddEditMB.client.name}" required="true" />
+					</div>
+	
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_phone" value="#{labels.client_phone}: " />
+						<p:inputMask styleClass="ui-grid-col-3" id="client_phone" mask="(99)99999-999?9" value="#{clientAddEditMB.client.phone}" required="true"/>
+						
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_mail" value="#{labels.client_mail}: " />
+						<p:inputText styleClass="ui-grid-col-5" id="client_mail" value="#{clientAddEditMB.client.mail}" type="email"/>
+					</div>
+	
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_birthDate" value="#{labels.client_birthDate}: " />
+						<p:calendar styleClass="ui-grid-col-3" id="client_birthDate" value="#{clientAddEditMB.client.birthDate}" required="true" pattern="dd/MM/yyyy"  navigator="true" mode="popup" mask="99/99/9999" locale="pt_BR" yearRange="c-80:c+0"/>
+						
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_address" value="#{labels.client_address}: " />
+						<p:inputText styleClass="ui-grid-col-5" id="client_address" value="#{clientAddEditMB.client.address}" />
+					</div>
+					
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="client_sexOrientation" value="#{labels.client_sexOrientation}: " />
+						<p:selectOneRadio id="client_sexOrientation" value="#{clientAddEditMB.client.sexOrientation}">
+							<f:selectItem itemLabel="Masculino" itemValue="MASC" />
+							<f:selectItem itemLabel="Feminino" itemValue="FEM" />
+						</p:selectOneRadio>
+					</div>
+	
+					<p:commandButton value="#{labels.button_save}"
+						action="list.faces" actionListener="#{clientAddEditMB.save}"
+						style="margin: 130 auto;" ajax="false" />
+				</p:panel>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
