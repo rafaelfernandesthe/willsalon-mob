@@ -75,13 +75,23 @@
 			<url>http://nakedobjects.sourceforge.net/m2-repo/snapshot/</url>
 		</repository>
 
+		<!-- NIGHTLABS -->
+		<repository>
+			<id>nightlabs</id>
+			<url>http://dev.nightlabs.org/maven-repository/repo/</url>
+		</repository>
+
+		<!-- PRIMEFACES THEMES -->
+		<repository>
+			<id>primefaces-themes</id>
+			<url>http://repository.primefaces.org/</url>
+		</repository>
+
 		<!-- JBOSS -->
 		<repository>
 			<id>JBoss Repository</id>
 			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
-		
-		
 	</repositories>
 
 	<dependencies>
@@ -199,7 +209,11 @@
 <!-- 		</dependency> -->
 
 		<!-- PRIMEFACES ALL THEMES -->
-
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.10</version>
+		</dependency>
 
 		<!-- SPRING DATA JPA -->
 		<dependency>
