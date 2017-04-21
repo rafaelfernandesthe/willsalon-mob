@@ -87,11 +87,6 @@
 			<url>http://repository.primefaces.org/</url>
 		</repository>
 
-		<!-- JBOSS -->
-		<repository>
-			<id>JBoss Repository</id>
-			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
