@@ -41,12 +41,6 @@
 
 		<!-- JBOSS REPOSITORY -->
 		<repository>
-			<id>jboss-repository</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/</url>
-		</repository>
-
-		<!-- JBOSS REPOSITORY -->
-		<repository>
 			<id>JBoss Repo</id>
 			<url>http://repository.jboss.com</url>
 		</repository>
