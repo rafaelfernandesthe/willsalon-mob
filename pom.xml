@@ -307,7 +307,7 @@
 			</plugins>
 		  </build>
 		</profile>
-		<profile
+		<profile>
 			 <id>digitalocean</id>
 			 <build>
 				<finalName>system</finalName>
