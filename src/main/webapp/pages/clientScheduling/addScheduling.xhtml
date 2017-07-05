@@ -17,12 +17,14 @@ n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '245786829216560'); // Insert your pixel ID here.
+fbq('track', 'PageView');
 fbq('track', 'Lead');
 <!-- DO NOT MODIFY -->
 <!-- End Facebook Pixel Code -->
 </h:outputScript>
 		
-		<p:button value="Ver Meus Agendamentos" href="/pages/clientScheduling/list.faces?clientId=#{clientSchedulingAddEditMB.clientId}"  ajax="false"  icon="ui-icon-search" />
+		<p:outputLabel value="Seja Bem-Vindo #{clientSchedulingAddEditMB.scheduling.client.name}" style="color:green;text-align:center;"/>
+		<p:button value="Esqueceu seu horário? Clique aqui!" href="/pages/clientScheduling/list.faces?clientId=#{clientSchedulingAddEditMB.clientId}"  ajax="false"  icon="ui-icon-search" />
 		<h:form id="formScheduling">
 		
 			<f:metadata>
@@ -47,7 +49,7 @@ fbq('track', 'Lead');
 								<p:selectOneMenu id="employee" value="#{clientSchedulingAddEditMB.scheduling.employee}" required="true" converter="autocompleteConverter">
 									<f:selectItem value="#{null}" itemLabel="Selecione"/>
 									<f:selectItems value="#{clientSchedulingAddEditMB.autocompleteEmployee('')}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
-									<p:ajax event="itemSelect" listener="#{clientSchedulingAddEditMB.loadDateHourList('1')}" process="@this employee" update="dateHour formScheduling:sumary formScheduling:accordion_1:alert_employee formScheduling:alert_footer" />
+									<p:ajax event="itemSelect" listener="#{clientSchedulingAddEditMB.loadDateHourList('1')}" process="@this employee" update="dateHour dateHourMessage formScheduling:sumary formScheduling:accordion_1:alert_employee formScheduling:alert_footer" />
 									<p:ajax event="change" listener="#{clientSchedulingAddEditMB.loadDateHourList('1')}" process="@this employee" update="dateHour formScheduling:sumary formScheduling:accordion_1:alert_employee formScheduling:alert_footer" />
 								</p:selectOneMenu>
 								<p:outputLabel id="alert_employee" style="color:red"  
@@ -61,16 +63,16 @@ fbq('track', 'Lead');
 								<p:selectManyCheckbox id="checkProcedures" value="#{clientSchedulingAddEditMB.selectedProcedureList}" required="true" >
 						            <f:selectItems value="#{clientSchedulingAddEditMB.procedureList}" var="item" itemLabel="#{item}" itemValue="#{item.id}"/>
 								</p:selectManyCheckbox>
-								<p:commandButton value="Confirmar Serviços"  onclick="PF('accordion_1').select(2)"/>
+								<p:commandButton value="Confirmar Serviços" process="@this checkProcedures" actionListener="#{clientSchedulingAddEditMB.loadDateHourList('2')}" update="dateHour dateHourMessage"/>
 							</div>
 						</p:tab>
 						
-						<p:tab id="tabDate" title="Data e Horário">
+						<p:tab id="tabDate" title="Data e Horário" disabled="true">
 							<div class="ui-grid-row">
 								<p:outputLabel for="date" value="#{labels.scheduling_date}"/>
 								<p:calendar id="date" value="#{clientSchedulingAddEditMB.scheduling.initialDate}" mode="inline" locale="pt_BR" required="true" 
 								pattern="dd/MM/yyyy" mindate="new Date()">
-									<p:ajax event="dateSelect" listener="#{clientSchedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour previsionDate formScheduling:sumary"/>
+									<p:ajax event="dateSelect" listener="#{clientSchedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour dateHourMessage previsionDate formScheduling:sumary"/>
 								</p:calendar>
 							</div>
 							
@@ -80,6 +82,9 @@ fbq('track', 'Lead');
 									<p:ajax event="change" listener="#{clientSchedulingAddEditMB.prepareFinalDateProvision}" process="@this checkProcedures dateHour" update="previsionDate formScheduling:operationButton formScheduling:sumary" />
 						            <f:selectItems value="#{clientSchedulingAddEditMB.dateHourList}" binding="#{clientSchedulingAddEditMB.selectItensDateHourBinding}" />
 						        </p:selectOneRadio>
+						        <p:outputLabel id="dateHourMessage"  
+						        value="#{clientSchedulingAddEditMB.messageNoHasTime}"
+								style="color:red;" />
 						        <p:outputLabel for="previsionDate" value="#{labels.scheduling_finalDatePrevision}"/>
 						        <p:inputText id="previsionDate" value="#{clientSchedulingAddEditMB.scheduling.finalDatePrevisionFormatWithoutDay}" disabled="true"/>
 							</div>
@@ -95,7 +100,8 @@ fbq('track', 'Lead');
 					<p:outputLabel id="alert_footer" style="color:red"  
 							value="#{clientSchedulingAddEditMB.employeeCanSchedule == true ? '' : 'O profissional '.concat(clientSchedulingAddEditMB.scheduling.employee).concat(' atende somente por ordem de chegada')}"/>
 					<p:commandButton id="operationButton" value="Finalizar Agendamento" actionListener="#{clientSchedulingAddEditMB.save}"
-					style="margin: 130 auto;" ajax="false" disabled="#{!clientSchedulingAddEditMB.canFinish || !clientSchedulingAddEditMB.employeeCanSchedule}" onclick="PF('dialog_wait').show()" />
+					style="margin: 130 auto;" ajax="false" disabled="#{!clientSchedulingAddEditMB.canFinish || !clientSchedulingAddEditMB.employeeCanSchedule}" onclick="PF('dialog_wait').show()" 
+					onsuccess="fbq('track', 'Purchase', {value: '0.00', moeda: 'USD'});"/>
 					
 				</p:panel>
 			</div>
@@ -128,7 +134,7 @@ fbq('track', 'Lead');
 						<p:calendar id="finalDatePrevision" value="#{clientSchedulingAddEditMB.scheduling.finalDatePrevision}" disabled="false" locale="pt_BR" pattern="HH:mm" timeOnly="true"/>
 					
 						<p:commandButton value="Sim" onclick="PF('dialog_show').hide()" process="@this"
-						actionListener="#{clientSchedulingAddEditMB.save}" onsuccess="fbq('track', 'Purchase', {value: '0.00', moeda: 'USD'});" action="list.faces"/>
+						actionListener="#{clientSchedulingAddEditMB.save}" action="list.faces"/>
 						<p:commandButton value="Não" type="button" onclick="PF('dialog_show').hide()" />
 					</div>
 			</p:dialog>

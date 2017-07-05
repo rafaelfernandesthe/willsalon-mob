@@ -84,6 +84,8 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	private Integer clientId;
 
+	private String messageNoHasTime;
+
 	public ClientSchedulingAddEditMB() {
 		this.scheduling = new SchedulingEntity();
 		this.scheduling.setInitialDate(new Date());
@@ -114,15 +116,13 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 			result += "Cliente: " + scheduling.getClient().toString() + "\n";
 		}
 		if (scheduling.getEmployee() != null) {
-			result += "Profissional: " + scheduling.getEmployee().getName()
-					+ "\n";
+			result += "Profissional: " + scheduling.getEmployee().getName() + "\n";
 		}
 		if (scheduling.getProcedureList() != null) {
 			result += "Serviços: " + scheduling.getProcedureList() + "\n";
 		}
 		if (scheduling.getInitialDate() != null) {
-			result += "Dia: " + scheduling.getInitialDateFormatWithoutHours()
-					+ "\n";
+			result += "Dia: " + scheduling.getInitialDateFormatWithoutHours() + "\n";
 		}
 		if (dateHour != null) {
 			result += "Horário: " + dateHour;
@@ -132,16 +132,15 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 	}
 
 	public String getListEmployeeNames() {
-		String result = String.format("(%s)", employeeRepository.getListName()
-				.toString().replaceAll("\\[", "").replaceAll("\\]", ""));
+		String result = String.format("(%s)",
+				employeeRepository.getListName().toString().replaceAll("\\[", "").replaceAll("\\]", ""));
 		return result;
 	}
 
 	public void preSave() {
 		scheduling.setProcedureList(null);
 		for (Object p : getSelectedProcedureList()) {
-			scheduling.getProcedureList().add(
-					procedureRepository.findOne(new Long((String) p)));
+			scheduling.getProcedureList().add(procedureRepository.findOne(new Long((String) p)));
 		}
 		if (scheduling.getInitialDate() != null && dateHour != null) {
 			Calendar c1 = Calendar.getInstance();
@@ -185,8 +184,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		c.set(Calendar.MINUTE, 59);
 		c.set(Calendar.SECOND, 59);
 		Date dateF = c.getTime();
-		schedulingResult = schedulingRepository.findByDayAndEmployee(dateI,
-				dateF, scheduling.getEmployee().getId());
+		schedulingResult = schedulingRepository.findByDayAndEmployee(dateI, dateF, scheduling.getEmployee().getId());
 
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
@@ -194,14 +192,10 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		dateHourClosedList = new ArrayList<String>();
 		for (SchedulingEntity e : schedulingResult) {
 			cTmp.setTime(e.getInitialDate());
-			closedList.add(HourUtils.getCorrectHourOrMinute(cTmp
-					.get(Calendar.HOUR_OF_DAY))
-					+ ":"
-					+ HourUtils.getCorrectHourOrMinute(cTmp
-							.get(Calendar.MINUTE)));
-			String out = String.format("%s - %s até %s", e.getClient()
-					.getName(), e.getInitialDateFormatWithoutDay(), e
-					.getFinalDatePrevisionFormatWithoutDay());
+			closedList.add(HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.HOUR_OF_DAY)) + ":"
+					+ HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.MINUTE)));
+			String out = String.format("%s - %s até %s", e.getClient().getName(), e.getInitialDateFormatWithoutDay(),
+					e.getFinalDatePrevisionFormatWithoutDay());
 			dateHourClosedList.add(out);
 
 			cTmp2.setTime(e.getFinalDatePrevision());
@@ -210,33 +204,47 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 				cTmp.add(Calendar.MINUTE, 1);
 				if (cTmp.compareTo(cTmp2) == 0)
 					break;
-				closedList.add(HourUtils.getCorrectHourOrMinute(cTmp
-						.get(Calendar.HOUR_OF_DAY))
-						+ ":"
-						+ HourUtils.getCorrectHourOrMinute(cTmp
-								.get(Calendar.MINUTE)));
+				closedList.add(HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.HOUR_OF_DAY)) + ":"
+						+ HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.MINUTE)));
 			}
 
 		}
 
 		List<String> completeList = HourUtils.completeListHours();
 
-		setDateHourList(completeList);
+//		setDateHourList(completeList);
 		selectItensDateHourList = new ArrayList<SelectItem>();
+
+		int minutesToservice = 0;
+		if (!getSelectedProcedureList().isEmpty()) {
+			for (Object p : getSelectedProcedureList()) {
+				minutesToservice += procedureRepository.findMinutesByProcedure(new Long((String) p));
+			}
+		}
+
 		for (String item : completeList) {
-			SelectItem newItem = new SelectItem(item);
 			if (closedList.contains(item)) {
 				continue;
 			}
+
+			if (closedList.contains(HourUtils.sumMinutes(item, minutesToservice))) {
+				continue;
+			}
+
+			SelectItem newItem = new SelectItem(item);
 			selectItensDateHourList.add(newItem);
 		}
 		selectItensDateHourBinding.setValue(selectItensDateHourList);
 
+		if (selectItensDateHourList.isEmpty())
+			messageNoHasTime = "NÃO HÁ HORÁRIO DISPONÍVEL PARA ESSA DATA. ESCOLHA OUTRA DATA OU OUTRO PROFISSIONAL";
+		else
+			messageNoHasTime = "";
+
 		if (accordionToOpen.equals("null"))
 			return;
 
-		RequestContext.getCurrentInstance().execute(
-				String.format("PF('accordion_1').select(%s)", accordionToOpen));
+		RequestContext.getCurrentInstance().execute(String.format("PF('accordion_1').select(%s)", accordionToOpen));
 	}
 
 	public List<ClientEntity> autocompleteClient(String query) {
@@ -272,30 +280,23 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 			if (schedulingResult == null || schedulingResult.isEmpty()) {
 				canFinish = true;
 			}
-			scheduling.setInitialDate(HourUtils.zeroMilli(scheduling
-					.getInitialDate()));
-			scheduling.setFinalDatePrevision(HourUtils.zeroMilli(scheduling
-					.getFinalDatePrevision()));
+			scheduling.setInitialDate(HourUtils.zeroMilli(scheduling.getInitialDate()));
+			scheduling.setFinalDatePrevision(HourUtils.zeroMilli(scheduling.getFinalDatePrevision()));
 			for (SchedulingEntity scheduled : schedulingResult) {
-				scheduled.setInitialDate(HourUtils.zeroMilli(scheduled
-						.getInitialDate()));
-				if (scheduling.getInitialDate().before(
-						scheduled.getInitialDate())
-						&& scheduling.getFinalDatePrevision().after(
-								scheduled.getInitialDate())) {
-					setInternalNotify("Não existe tempo suficiente para finalizar todos os serviços desse agendamento, tente outro horário.");
-					RequestContext.getCurrentInstance().execute(
-							"PF('dialog_erro').show()");
-					RequestContext.getCurrentInstance().update(
-							"formScheduling:dialog_erro");
+				scheduled.setInitialDate(HourUtils.zeroMilli(scheduled.getInitialDate()));
+				if (scheduling.getInitialDate().before(scheduled.getInitialDate())
+						&& scheduling.getFinalDatePrevision().after(scheduled.getInitialDate())) {
+					setInternalNotify(
+							"Não existe tempo suficiente para finalizar todos os serviços desse agendamento, tente outro horário.");
+					RequestContext.getCurrentInstance().execute("PF('dialog_erro').show()");
+					RequestContext.getCurrentInstance().update("formScheduling:dialog_erro");
 					canFinish = false;
 					return;
 				} else {
 					canFinish = true;
 				}
 			}
-			RequestContext.getCurrentInstance().execute(
-					"PF('accordion_1').unselect(2)");
+			RequestContext.getCurrentInstance().execute("PF('accordion_1').unselect(2)");
 		}
 	}
 
@@ -307,10 +308,8 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 			scheduling.setHistory(getHistory());
 
 			if (schedulingRepository.existEqualsDate(scheduling)) {
-				RequestContext.getCurrentInstance().execute(
-						"PF('dialog_conflit').show()");
-				RequestContext.getCurrentInstance().update(
-						"formScheduling:dialog_conflit");
+				RequestContext.getCurrentInstance().execute("PF('dialog_conflit').show()");
+				RequestContext.getCurrentInstance().update("formScheduling:dialog_conflit");
 				return;
 			}
 
@@ -321,11 +320,9 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 				mail.setFrom("willsalon@willsalon.com", "Willsalon.com");
 				mail.setCharset("utf8");
 				mail.setSubject("Novo Agendamento de Cliente");
-				mail.setMsg("O Cliente realizou um novo agendamento: "
-						+ scheduling.toString());
+				mail.setMsg("O Cliente realizou um novo agendamento: " + scheduling.toString());
 				mail.setSSLOnConnect(true);
-				mail.setAuthentication("willsalon@willsalon.com",
-						"atendimentoWillSalon1");
+				mail.setAuthentication("willsalon@willsalon.com", "atendimentoWillSalon1");
 				mail.setHostName("smtp.willsalon.com");
 				mail.setSmtpPort(587);
 				mail.addTo("willsalon@willsalon.com", "Willsalon.com");
@@ -335,16 +332,13 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 				e.printStackTrace();
 			}
 
-			RequestContext.getCurrentInstance().execute(
-					"PF('dialog_saved').show()");
+			RequestContext.getCurrentInstance().execute("PF('dialog_saved').show()");
 		}
 	}
 
 	private String getHistory() {
-		String actualDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-				.format(new Date());
-		return String.format("Operação realizada pelo próprio usuário às %s",
-				actualDate);
+		String actualDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+		return String.format("Operação realizada pelo próprio usuário às %s", actualDate);
 	}
 
 	public Date getCorrectHourDay(Date date, boolean init) {
@@ -358,8 +352,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	public Boolean getEmployeeCanSchedule() {
 		return getScheduling().getEmployee() == null
-				|| (getScheduling().getEmployee() != null && !getScheduling()
-						.getEmployee().getMeetByOrder());
+				|| (getScheduling().getEmployee() != null && !getScheduling().getEmployee().getMeetByOrder());
 	}
 
 	public String getTitle() {
@@ -372,8 +365,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	private String getResourceProperty(String resource, String label) {
 		Application application = this.context.getApplication();
-		ResourceBundle bundle = application.getResourceBundle(this.context,
-				resource);
+		ResourceBundle bundle = application.getResourceBundle(this.context, resource);
 
 		return bundle.getString(label);
 	}
@@ -408,8 +400,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		return selectedProcedureList;
 	}
 
-	public void setSelectedProcedureList(
-			List<ProcedureEntity> selectedProcedureList) {
+	public void setSelectedProcedureList(List<ProcedureEntity> selectedProcedureList) {
 		this.selectedProcedureList = selectedProcedureList;
 	}
 
@@ -461,8 +452,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		return selectItensDateHourList;
 	}
 
-	public void setSelectItensDateHourList(
-			List<SelectItem> selectItensDateHourList) {
+	public void setSelectItensDateHourList(List<SelectItem> selectItensDateHourList) {
 		this.selectItensDateHourList = selectItensDateHourList;
 	}
 
@@ -470,8 +460,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		return selectItensDateHourBinding;
 	}
 
-	public void setSelectItensDateHourBinding(
-			UISelectItems selectItensDateHourBinding) {
+	public void setSelectItensDateHourBinding(UISelectItems selectItensDateHourBinding) {
 		this.selectItensDateHourBinding = selectItensDateHourBinding;
 	}
 
@@ -481,8 +470,15 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	public void setClientId(Integer clientId) {
 		this.clientId = clientId;
-		this.scheduling
-				.setClient(clientRepository.findOne(clientId.longValue()));
+		this.scheduling.setClient(clientRepository.findOne(clientId.longValue()));
+	}
+
+	public String getMessageNoHasTime() {
+		return messageNoHasTime;
+	}
+
+	public void setMessageNoHasTime(String messageNoHasTime) {
+		this.messageNoHasTime = messageNoHasTime;
 	}
 
 }

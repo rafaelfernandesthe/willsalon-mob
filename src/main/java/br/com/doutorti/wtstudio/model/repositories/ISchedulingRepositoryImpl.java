@@ -72,7 +72,8 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 	public boolean existEqualsDate(SchedulingEntity scheduling) {
 		String queryString = "SELECT count(*) FROM SchedulingEntity s WHERE 1=1 " + "AND YEAR(s.initialDate) = :year "
 				+ "AND MONTH(s.initialDate) = :month " + "AND DAY(s.initialDate) = :day "
-				+ "AND HOUR(s.initialDate) = :hour " + "AND MINUTE(s.initialDate) = :minute ";
+				+ "AND HOUR(s.initialDate) = :hour " + "AND MINUTE(s.initialDate) = :minute "
+						+ "AND s.employee.id = :employeeId";
 		Query q = em.createQuery(queryString);
 		Calendar c = Calendar.getInstance();
 		c.setTime(scheduling.getInitialDate());
@@ -81,7 +82,7 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 		q.setParameter("day", c.get(Calendar.DAY_OF_MONTH));
 		q.setParameter("hour", c.get(Calendar.HOUR_OF_DAY));
 		q.setParameter("minute", c.get(Calendar.MINUTE));
-
+		q.setParameter("employeeId", scheduling.getEmployee().getId());
 		return ((Number) q.getSingleResult()).intValue() > 0;
 	}
 

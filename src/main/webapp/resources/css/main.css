@@ -32,3 +32,7 @@ input.ui-autocomplete-input {
 	padding-top: 5px;
 	padding-bottom: 5px;	
 }
+
+.ui-state-disabled {
+	opacity: .9;
+}

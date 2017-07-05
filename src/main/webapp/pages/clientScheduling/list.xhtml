@@ -17,7 +17,7 @@
 			</f:metadata>
 		
 		<p:panel id="schedulingPanel" header="Meus #{labels.scheduling}">
-				<p:outputLabel value="Cancelamento ou Alteração de agendamento, entre em contato por Tel: 2809-1414 WhatsApp: 97351-1138 ou pessoalmente!" style="color:red"/>
+				<p:outputLabel value="Para cancelar ou alterar seu horário chame no WhatsApp: 97351-1138 ou ligue para o Telefone: 2809-1414." style="color:red"/>
 				<p:dataTable id="schedulingDataTable" widgetVar="dataTable" selectionMode="single" emptyMessage="Nenhum agendamento encontrado"
 					var="scheduling" loadingMessage="#{labels.scheduling_load}" 
 					value="#{clientSchedulingMB.schedulings}" paginator="false" rowKey="#{scheduling.id}" tableStyleClass="ui-table-columntoggle">

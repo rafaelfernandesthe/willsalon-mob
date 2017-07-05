@@ -1,5 +1,7 @@
 package br.com.doutorti.wtstudio.support.clientScheduling;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -37,9 +39,13 @@ public class ClientSchedulingMB extends BaseBeans {
 	}
 
 	public void onLoad() {
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
 		if (getClientId() != null)
-			schedulings = schedulingRepository.findByClient(getClientId()
-					.longValue());
+			schedulings = schedulingRepository.findFuturesByClient(getClientId()
+					.longValue(), c.getTime());
 	}
 
 	public List<SchedulingEntity> getSchedulings() {

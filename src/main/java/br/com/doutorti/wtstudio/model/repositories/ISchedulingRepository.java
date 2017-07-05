@@ -22,7 +22,7 @@ public interface ISchedulingRepository extends
 	public List<SchedulingEntity> findByWasRepetitionAndHour(Date initialDate,
 			Long clientId, Long employeeId);
 
-	@Query("SELECT s FROM SchedulingEntity s WHERE s.client.id = ?1 ORDER BY s.initialDate DESC")
-	public List<SchedulingEntity> findByClient(Long clientId);
+	@Query("SELECT s FROM SchedulingEntity s WHERE s.client.id = ?1 AND s.initialDate > ?2 ORDER BY s.initialDate DESC")
+	public List<SchedulingEntity> findFuturesByClient(Long clientId, Date brokerDate);
 
 }

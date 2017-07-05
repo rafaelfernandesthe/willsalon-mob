@@ -41,6 +41,12 @@
 
 		<!-- JBOSS REPOSITORY -->
 		<repository>
+			<id>jboss-repository</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/</url>
+		</repository>
+
+		<!-- JBOSS REPOSITORY -->
+		<repository>
 			<id>JBoss Repo</id>
 			<url>http://repository.jboss.com</url>
 		</repository>
@@ -81,6 +87,11 @@
 			<url>http://repository.primefaces.org/</url>
 		</repository>
 
+		<!-- JBOSS -->
+		<repository>
+			<id>JBoss Repository</id>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -274,46 +285,28 @@
 	</build>
 	
 	<profiles>
-		<profile>
-		 <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
-		 <!-- Use this profile for any OpenShift specific customization your app will need. -->
-		 <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
-		 <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
-		 <id>openshift</id>
-		 <build>
-			<finalName>system</finalName>
-			<plugins>
-			  <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>2.3</version>
-					<configuration>
-						<failOnMissingWebXml>false</failOnMissingWebXml>
-						<outputDirectory>deployments</outputDirectory>
-						  <warName>ROOT</warName>
-					</configuration>
-				</plugin>
-			</plugins>
-		  </build>
-		</profile>
-		<profile>
-			 <id>digitalocean</id>
-			 <build>
-				<finalName>system</finalName>
-				<plugins>
-				  <plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.3</version>
-						<configuration>
-							<failOnMissingWebXml>false</failOnMissingWebXml>
-							<outputDirectory>/opt/wildfly-8.2.1.Final/standalone/deployments/</outputDirectory>
-							<warName>ROOT</warName>
-						</configuration>
-					</plugin>
-				</plugins>
-			  </build>
-		</profile>
+    <profile>
+     <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
+     <!-- Use this profile for any OpenShift specific customization your app will need. -->
+     <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
+     <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
+     <id>openshift</id>
+     <build>
+        <finalName>system</finalName>
+        <plugins>
+          <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <outputDirectory>deployments</outputDirectory>
+              		  <warName>ROOT</warName>
+                </configuration>
+            </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
 	
