@@ -311,6 +311,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 	}
 
 	public void save() throws IOException {
+		try{
 		preSave();
 		if (this.scheduling != null) {
 			scheduling.setFinished(false);
@@ -343,6 +344,15 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 			}
 
 			RequestContext.getCurrentInstance().execute("PF('dialog_saved').show()");
+		}
+		}catch (Exception e){
+			String script = ""
+			+ " jQuery(document).ready(function(){"
+			+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+			+ " $(window).scrollTop(0);"
+			+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+			+ " setTimeout(function(){location.href='http://www.willsalon.com/#SCHEDULING'},2000)}});";
+			RequestContext.getCurrentInstance().execute( script );
 		}
 	}
 
