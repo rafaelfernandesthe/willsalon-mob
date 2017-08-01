@@ -173,8 +173,18 @@ public class SchedulingAddEditMB extends BaseBeans {
 		c.set(Calendar.MINUTE, 59);
 		c.set(Calendar.SECOND, 59);
 		Date dateF = c.getTime();
+		try{
 		schedulingResult = schedulingRepository.findByDayAndEmployee(dateI,
 				dateF, scheduling.getEmployee().getId());
+		}catch(NullPointerException e){
+			String script = ""
+			+ " jQuery(document).ready(function(){"
+			+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+			+ " $(window).scrollTop(0);"
+			+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+			+ " setTimeout(function(){location.href='http://104.236.67.194/admin'},2000)}});";
+			RequestContext.getCurrentInstance().execute( script );
+		}
 
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
@@ -302,6 +312,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 	}
 
 	public void save() throws IOException {
+		try{
 		preSave();
 		if (this.scheduling != null) {
 			scheduling.setFinished(false);
@@ -389,6 +400,15 @@ public class SchedulingAddEditMB extends BaseBeans {
 		}
 		RequestContext.getCurrentInstance()
 				.execute("PF('dialog_saved').show()");
+		}catch (Exception e){
+			String script = ""
+			+ " jQuery(document).ready(function(){"
+			+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+			+ " $(window).scrollTop(0);"
+			+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+			+ " setTimeout(function(){location.href='http://104.236.67.194/admin'},2000)}});";
+			RequestContext.getCurrentInstance().execute( script );
+		}
 	}
 
 	public void addNewClient() {

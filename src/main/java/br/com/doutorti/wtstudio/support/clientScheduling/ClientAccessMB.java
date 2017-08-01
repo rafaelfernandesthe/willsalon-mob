@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.context.RequestContext;
 import org.springframework.context.annotation.Scope;
 
 import br.com.doutorti.wtstudio.model.ClientEntity;
@@ -50,6 +51,7 @@ public class ClientAccessMB extends BaseBeans {
 	}
 	
 	private void verifyClient() {
+		try{
 		if (client.getPhone() != null && client.getBirthDate() != null) {
 			setLoadedClient(clientRepository.findByPhoneContainingAndBirthDate(
 					client.getPhone(), client.getBirthDate()));
@@ -69,6 +71,15 @@ public class ClientAccessMB extends BaseBeans {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		}catch(Exception e){
+			String script = ""
+			+ " jQuery(document).ready(function(){"
+			+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+			+ " $(window).scrollTop(0);"
+			+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+			+ " setTimeout(function(){location.href='http://www.willsalon.com/#SCHEDULING'},2000)}});";
+			RequestContext.getCurrentInstance().execute( script );
 		}
 	}
 

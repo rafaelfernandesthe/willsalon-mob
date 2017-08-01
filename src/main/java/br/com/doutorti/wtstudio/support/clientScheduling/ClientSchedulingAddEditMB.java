@@ -184,7 +184,17 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		c.set(Calendar.MINUTE, 59);
 		c.set(Calendar.SECOND, 59);
 		Date dateF = c.getTime();
-		schedulingResult = schedulingRepository.findByDayAndEmployee(dateI, dateF, scheduling.getEmployee().getId());
+		try{
+			schedulingResult = schedulingRepository.findByDayAndEmployee(dateI, dateF, scheduling.getEmployee().getId());
+		} catch (NullPointerException e){
+			String script = ""
+			+ " jQuery(document).ready(function(){"
+			+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+			+ " $(window).scrollTop(0);"
+			+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+			+ " setTimeout(function(){location.href='http://www.willsalon.com/#SCHEDULING'},2000)}});";
+			RequestContext.getCurrentInstance().execute( script );
+		}
 
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
