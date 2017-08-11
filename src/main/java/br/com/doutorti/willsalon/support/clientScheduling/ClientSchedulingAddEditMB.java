@@ -333,7 +333,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 					mail.setHostName( "smtp.willsalon.com" );
 					mail.setSmtpPort( 587 );
 					mail.addTo( "willsalon@willsalon.com", "Willsalon.com" );
-					mail.send();
+//					mail.send();
 
 				} catch ( EmailException e ) {
 					e.printStackTrace();
