@@ -324,16 +324,16 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 				try {
 					SimpleEmail mail = new SimpleEmail();
-					mail.setFrom( "willsalon@willsalon.com", "Willsalon.com" );
+					mail.setFrom( "informativo@willsalon.com", "Willsalon.com" );
 					mail.setCharset( "utf8" );
 					mail.setSubject( "Novo Agendamento de Cliente" );
 					mail.setMsg( "O Cliente realizou um novo agendamento: " + scheduling.toString() );
 					mail.setSSLOnConnect( true );
-					mail.setAuthentication( "willsalon@willsalon.com", "atendimentoWillSalon1" );
+					mail.setAuthentication( "informativo@willsalon.com", "atendimentoWillSalon1" );
 					mail.setHostName( "smtp.willsalon.com" );
 					mail.setSmtpPort( 587 );
 					mail.addTo( "willsalon@willsalon.com", "Willsalon.com" );
-//					mail.send();
+					mail.send();
 
 				} catch ( EmailException e ) {
 					e.printStackTrace();
