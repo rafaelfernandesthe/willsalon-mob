@@ -14,17 +14,17 @@
 	
 	<converter>
 		<converter-id>autocompleteConverter</converter-id>
-		<converter-class>br.com.doutorti.wtstudio.model.utils.AutoCompleteConverter</converter-class>
+		<converter-class>br.com.doutorti.willsalon.model.utils.AutoCompleteConverter</converter-class>
 	</converter>
 	
 	<system-event-listener>
-	    <system-event-listener-class>br.com.doutorti.wtstudio.support.settings.ViewScopeCallbackRegistrer</system-event-listener-class>
+	    <system-event-listener-class>br.com.doutorti.willsalon.support.settings.ViewScopeCallbackRegistrer</system-event-listener-class>
 	    <system-event-class>javax.faces.event.PostConstructViewMapEvent</system-event-class>
 	    <source-class>javax.faces.component.UIViewRoot</source-class>
 	</system-event-listener>
 
 	<system-event-listener>
-	    <system-event-listener-class>br.com.doutorti.wtstudio.support.settings.ViewScopeCallbackRegistrer</system-event-listener-class>
+	    <system-event-listener-class>br.com.doutorti.willsalon.support.settings.ViewScopeCallbackRegistrer</system-event-listener-class>
 	    <system-event-class>javax.faces.event.PreDestroyViewMapEvent</system-event-class>
 	    <source-class>javax.faces.component.UIViewRoot</source-class>
 	</system-event-listener>

@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
 	<persistence-unit name="persistenceUnitName" transaction-type="RESOURCE_LOCAL">
 		<class>org.springframework.data.jpa.domain.AbstractPersistable</class>
-		<class>br.com.doutorti.wtstudio.model.UserEntity</class>
-		<class>br.com.doutorti.wtstudio.model.PersonEntity</class>
-		<class>br.com.doutorti.wtstudio.model.ClientEntity</class>
-		<class>br.com.doutorti.wtstudio.model.EmployeeEntity</class>
-		<class>br.com.doutorti.wtstudio.model.ProcedureEntity</class>
-		<class>br.com.doutorti.wtstudio.model.SchedulingEntity</class>
+		<class>br.com.doutorti.willsalon.model.UserEntity</class>
+		<class>br.com.doutorti.willsalon.model.PersonEntity</class>
+		<class>br.com.doutorti.willsalon.model.ClientEntity</class>
+		<class>br.com.doutorti.willsalon.model.EmployeeEntity</class>
+		<class>br.com.doutorti.willsalon.model.ProcedureEntity</class>
+		<class>br.com.doutorti.willsalon.model.SchedulingEntity</class>
 		<properties>
 			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" /> -->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />

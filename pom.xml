@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.doutorti</groupId>
-	<artifactId>wtstudio-mob</artifactId>
+	<artifactId>willsalon-mob</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
@@ -286,11 +286,24 @@
 	
 	<profiles>
 		<profile>
+			 <id>dev</id>
+			 <properties>
+			 	<dbUrl>jdbc:mysql://localhost:3306/mobile</dbUrl>
+			 	<dbUserName>root</dbUserName>
+			 	<dbPassword>root</dbPassword>
+			 </properties>
+		</profile>
+		<profile>
 		 <!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
 		 <!-- Use this profile for any OpenShift specific customization your app will need. -->
 		 <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
 		 <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
 		 <id>openshift</id>
+		<properties>
+			<dbUrl>jdbc:mysql://127.13.75.2:3306/mobile</dbUrl>
+		 	<dbUserName>adminakCLtCT</dbUserName>
+		 	<dbPassword>KjM5NayCI14m</dbPassword>
+		</properties>
 		 <build>
 			<finalName>system</finalName>
 			<plugins>
@@ -309,6 +322,11 @@
 		</profile>
 		<profile>
 			 <id>digitalocean</id>
+			 <properties>
+			 	<dbUrl>jdbc:mysql://localhost:3306/mobile</dbUrl>
+			 	<dbUserName>root</dbUserName>
+			 	<dbPassword>KjM5NayCI14m</dbPassword>
+			 </properties>
 			 <build>
 				<finalName>ROOT</finalName>
 				<plugins>

@@ -2,8 +2,8 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:wtstudio.xml,
-			classpath:wtstudio-spring-security.xml,
+    <param-value>classpath:willsalon.xml,
+			classpath:willsalon-spring-security.xml,
 			/WEB-INF/applicationContext.xml</param-value>
   </context-param>
   <context-param>
