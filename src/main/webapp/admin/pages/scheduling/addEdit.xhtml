@@ -47,10 +47,11 @@
 						<p:tab id="tabServices" title="Serviços">
 							<div class="ui-grid-row">
 								<p:outputLabel styleClass="ui-grid-col-2" for="checkProcedures" value="#{labels.procedure}s"/>
-								<p:selectManyCheckbox id="checkProcedures" value="#{schedulingAddEditMB.selectedProcedureList}" required="true" >
+								<p:selectCheckboxMenu id="checkProcedures" value="#{schedulingAddEditMB.selectedProcedureList}" required="true" >
+									<f:selectItem itemLabel="Escolha o(s) Serviço(s)" itemValue="" />
 						            <f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemLabel="#{item}" itemValue="#{item.id}"/>
-								</p:selectManyCheckbox>
-								<p:commandButton value="Confirmar Serviços"  onclick="PF('accordion_1').select(2)"/>
+								</p:selectCheckboxMenu>
+								<p:commandButton value="Confirmar Serviços" process="checkProcedures" onclick="PF('accordion_1').select(2)"/>
 							</div>
 						</p:tab>
 						
