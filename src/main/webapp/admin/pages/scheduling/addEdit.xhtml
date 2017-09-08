@@ -45,29 +45,55 @@
 							value="#{schedulingAddEditMB.employeeCanSchedule == true ? '' : 'O profissional '.concat(schedulingAddEditMB.scheduling.employee).concat(' atende somente por ordem de chegada')}"/>
 						</p:tab>
 						<p:tab id="tabServices" title="Serviços">
-							<div class="ui-grid-row">
-								<p:outputLabel styleClass="ui-grid-col-2" for="checkProcedures" value="#{labels.procedure}s"/>
-								<p:selectCheckboxMenu id="checkProcedures" value="#{schedulingAddEditMB.selectedProcedureList}" required="true" >
-									<f:selectItem itemLabel="Escolha o(s) Serviço(s)" itemValue="" />
-						            <f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemLabel="#{item}" itemValue="#{item.id}"/>
-								</p:selectCheckboxMenu>
-								<p:commandButton value="Confirmar Serviços" process="checkProcedures" onclick="PF('accordion_1').select(2)"/>
-							</div>
+							<p:outputLabel styleClass="ui-grid-col-2" for="procedure1" value="Infome o(s) #{labels.procedure}(s)"/>
+							<p:selectOneMenu id="procedure1" binding="#{schedulingAddEditMB.procedure1}" converter="autocompleteConverter" >
+								<f:selectItem value="#{null}" itemLabel="Selecione"/>
+								<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+								<p:ajax event="change" listener="#{schedulingAddEditMB.listenerProcedure()}" process="@this" />
+							</p:selectOneMenu>
+							<p:outputPanel id="dynamic1">
+								<p:selectOneMenu rendered="false" id="procedure2" binding="#{schedulingAddEditMB.procedure2}" converter="autocompleteConverter">
+									<f:selectItem value="#{null}" itemLabel="Selecione"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+								</p:selectOneMenu>
+							</p:outputPanel>
+							<p:outputPanel id="dynamic2">
+								<p:selectOneMenu rendered="false" id="procedure3" binding="#{schedulingAddEditMB.procedure3}" converter="autocompleteConverter">
+									<f:selectItem value="#{null}" itemLabel="Selecione"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+								</p:selectOneMenu>
+							</p:outputPanel>
+							<p:outputPanel id="dynamic3">
+								<p:selectOneMenu rendered="false" id="procedure4" binding="#{schedulingAddEditMB.procedure4}" converter="autocompleteConverter">
+									<f:selectItem value="#{null}" itemLabel="Selecione"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+								</p:selectOneMenu>
+							</p:outputPanel>
+							<p:outputPanel id="dynamic4">
+								<p:selectOneMenu rendered="false" id="procedure5" binding="#{schedulingAddEditMB.procedure5}" converter="autocompleteConverter">
+									<f:selectItem value="#{null}" itemLabel="Selecione"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+								</p:selectOneMenu>
+							<p:commandButton disabled="#{!schedulingAddEditMB.canAdd}" icon="ui-icon-plus" value="Adicionar Serviços" onclick="addNewRemote()"/>
+							<p:outputLabel rendered="#{!schedulingAddEditMB.canAdd}" style="color:red" value="*Podem ser informados no máximo 5 Serviços"/>
+							</p:outputPanel>
+							<p:commandButton value="Confirmar Serviços" process="tabServices" onclick="PF('accordion_1').select(2)"/>
+							<p:remoteCommand name="addNewRemote" process="@this" actionListener="#{schedulingAddEditMB.addNewProcedure()}"/>
 						</p:tab>
-						
+
 						<p:tab id="tabDate" title="Data e Horário">
 							<div class="ui-grid-row">
 								<p:outputLabel for="date" value="#{labels.scheduling_date}"/>
 								<p:calendar id="date" value="#{schedulingAddEditMB.scheduling.initialDate}" mode="inline" locale="pt_BR" required="true" 
 								pattern="dd/MM/yyyy" >
-									<p:ajax event="dateSelect" listener="#{schedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour previsionDate"/>
+									<p:ajax event="dateSelect" listener="#{schedulingAddEditMB.loadDateHourList('null')}" process="@this employee" update="dateHour previsionDate"/>
 								</p:calendar>
 							</div>
 							
 							<div class="ui-grid-row">
 								<p:outputLabel styleClass="ui-grid-col-2" for="dateHour" value="#{labels.scheduling_dateHour}"/>
 								<p:selectOneRadio id="dateHour" value="#{schedulingAddEditMB.dateHour}" required="true">
-									<p:ajax event="change" listener="#{schedulingAddEditMB.prepareFinalDateProvision}" process="@this checkProcedures dateHour" update="previsionDate formScheduling:operationButton" />
+									<p:ajax event="change" listener="#{schedulingAddEditMB.prepareFinalDateProvision}" process="@this dateHour" update="previsionDate formScheduling:operationButton" />
 						            <f:selectItems value="#{schedulingAddEditMB.dateHourList}" binding="#{schedulingAddEditMB.selectItensDateHourBinding}" />
 						        </p:selectOneRadio>
 						        <p:outputLabel for="previsionDate" value="#{labels.scheduling_finalDatePrevision}"/>

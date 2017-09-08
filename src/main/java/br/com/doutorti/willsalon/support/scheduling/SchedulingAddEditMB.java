@@ -20,7 +20,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.selectonemenu.SelectOneMenu;
 import org.primefaces.context.RequestContext;
+import org.primefaces.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +38,8 @@ import br.com.doutorti.willsalon.model.repositories.IProcedureRepository;
 import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
 import br.com.doutorti.willsalon.model.utils.HourUtils;
+
+import com.google.gson.Gson;
 
 //ConfigurableBeanFactory.SCOPE_SINGLETON, ConfigurableBeanFactory.SCOPE_PROTOTYPE,
 //WebApplicationContext.SCOPE_REQUEST, WebApplicationContext.SCOPE_SESSION
@@ -66,7 +70,12 @@ public class SchedulingAddEditMB extends BaseBeans {
 
 	private String title;
 
-	private List<ProcedureEntity> selectedProcedureList;
+	private SelectOneMenu procedure1;
+	private SelectOneMenu procedure2;
+	private SelectOneMenu procedure3;
+	private SelectOneMenu procedure4;
+	private SelectOneMenu procedure5;
+	private boolean canAdd;
 
 	private String dateHour;
 
@@ -118,6 +127,31 @@ public class SchedulingAddEditMB extends BaseBeans {
 		isShow = false;
 		dateHourClosedList = new ArrayList<String>();
 		showButtonNewClient = false;
+		canAdd = true;
+	}
+
+	public void addNewProcedure() {
+		canAdd = true;
+		if ( getProcedure2().isRendered() ) {
+			if ( getProcedure3().isRendered() ) {
+				if ( getProcedure4().isRendered() ) {
+					if ( !getProcedure5().isRendered() ) {
+						getProcedure5().setRendered( true );
+						RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic4" );
+						canAdd = false;
+					}
+				} else {
+					getProcedure4().setRendered( true );
+					RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic3" );
+				}
+			} else {
+				getProcedure3().setRendered( true );
+				RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic2" );
+			}
+		} else {
+			getProcedure2().setRendered( true );
+			RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic1" );
+		}
 	}
 
 	@PostConstruct
@@ -130,9 +164,9 @@ public class SchedulingAddEditMB extends BaseBeans {
 			scheduling.setClient( newClient );
 		}
 		scheduling.setProcedureList( null );
-		for ( Object p : getSelectedProcedureList() ) {
-			scheduling.getProcedureList().add( procedureRepository.findOne( new Long( (String) p ) ) );
-		}
+
+		prepareProcedureList();
+
 		if ( scheduling.getInitialDate() != null && dateHour != null ) {
 			Calendar c1 = Calendar.getInstance();
 			c1.setTime( scheduling.getInitialDate() );
@@ -152,6 +186,31 @@ public class SchedulingAddEditMB extends BaseBeans {
 			c1.set( Calendar.MINUTE, c2.get( Calendar.MINUTE ) );
 			scheduling.setInitialDate( c1.getTime() );
 		}
+	}
+
+	private void prepareProcedureList() {
+		if ( extractObject( procedure1.getSubmittedValue() ) != null ) {
+			scheduling.getProcedureList().add( extractObject( procedure1.getSubmittedValue() ) );
+		}
+		if ( extractObject( procedure2.getSubmittedValue() ) != null ) {
+			scheduling.getProcedureList().add( extractObject( procedure2.getSubmittedValue() ) );
+		}
+		if ( extractObject( procedure3.getSubmittedValue() ) != null ) {
+			scheduling.getProcedureList().add( extractObject( procedure3.getSubmittedValue() ) );
+		}
+		if ( extractObject( procedure4.getSubmittedValue() ) != null ) {
+			scheduling.getProcedureList().add( extractObject( procedure4.getSubmittedValue() ) );
+		}
+		if ( extractObject( procedure5.getSubmittedValue() ) != null ) {
+			scheduling.getProcedureList().add( extractObject( procedure5.getSubmittedValue() ) );
+		}
+	}
+
+	private ProcedureEntity extractObject( Object object ) {
+		if ( object == null )
+			return null;
+		JSONObject jsonResult = new JSONObject( object.toString() );
+		return new Gson().fromJson( jsonResult.toString(), ProcedureEntity.class );
 	}
 
 	public void cleanFields() {
@@ -439,15 +498,64 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return new SimpleDateFormat( "dd/MM/yyyy" ).format( new Date() );
 	}
 
-	public List<ProcedureEntity> getSelectedProcedureList() {
-		if ( selectedProcedureList == null ) {
-			selectedProcedureList = new ArrayList<ProcedureEntity>();
-		}
-		return selectedProcedureList;
+	// public List<ProcedureEntity> getSelectedProcedureList() {
+	// if ( selectedProcedureList == null ) {
+	// selectedProcedureList = new ArrayList<ProcedureEntity>();
+	// }
+	// return selectedProcedureList;
+	// }
+	//
+	// public void setSelectedProcedureList( List<ProcedureEntity>
+	// selectedProcedureList ) {
+	// this.selectedProcedureList = selectedProcedureList;
+	// }
+
+	public boolean isCanAdd() {
+		return canAdd;
 	}
 
-	public void setSelectedProcedureList( List<ProcedureEntity> selectedProcedureList ) {
-		this.selectedProcedureList = selectedProcedureList;
+	public void setCanAdd( boolean canAdd ) {
+		this.canAdd = canAdd;
+	}
+
+	public SelectOneMenu getProcedure1() {
+		return procedure1;
+	}
+
+	public void setProcedure1( SelectOneMenu procedure1 ) {
+		this.procedure1 = procedure1;
+	}
+
+	public SelectOneMenu getProcedure2() {
+		return procedure2;
+	}
+
+	public void setProcedure2( SelectOneMenu procedure2 ) {
+		this.procedure2 = procedure2;
+	}
+
+	public SelectOneMenu getProcedure3() {
+		return procedure3;
+	}
+
+	public void setProcedure3( SelectOneMenu procedure3 ) {
+		this.procedure3 = procedure3;
+	}
+
+	public SelectOneMenu getProcedure4() {
+		return procedure4;
+	}
+
+	public void setProcedure4( SelectOneMenu procedure4 ) {
+		this.procedure4 = procedure4;
+	}
+
+	public SelectOneMenu getProcedure5() {
+		return procedure5;
+	}
+
+	public void setProcedure5( SelectOneMenu procedure5 ) {
+		this.procedure5 = procedure5;
 	}
 
 	public Boolean getIsShow() {
@@ -579,4 +687,5 @@ public class SchedulingAddEditMB extends BaseBeans {
 			result.add( i );
 		return result;
 	}
+
 }
