@@ -50,7 +50,7 @@
 								<p:selectManyCheckbox id="checkProcedures" value="#{schedulingAddEditMB.selectedProcedureList}" required="true" >
 						            <f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemLabel="#{item}" itemValue="#{item.id}"/>
 								</p:selectManyCheckbox>
-								<p:commandButton value="Confirmar Serviços"  onclick="PF('accordion_1').select(2);$('#tabDate')[0].scrollHeight"/>
+								<p:commandButton value="Confirmar Serviços"  onclick="PF('accordion_1').select(2)"/>
 							</div>
 						</p:tab>
 						
