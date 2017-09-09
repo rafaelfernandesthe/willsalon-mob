@@ -48,37 +48,37 @@
 							<p:outputLabel styleClass="ui-grid-col-2" for="procedure1" value="Infome o(s) #{labels.procedure}(s)"/>
 							<p:selectOneMenu id="procedure1" binding="#{schedulingAddEditMB.procedure1}" converter="autocompleteConverter" >
 								<f:selectItem value="#{null}" itemLabel="Selecione"/>
-								<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
-								<p:ajax event="change" listener="#{schedulingAddEditMB.listenerProcedure()}" process="@this" />
+								<f:selectItems value="#{schedulingAddEditMB.procedureList1}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
 							</p:selectOneMenu>
 							<p:outputPanel id="dynamic1">
 								<p:selectOneMenu rendered="false" id="procedure2" binding="#{schedulingAddEditMB.procedure2}" converter="autocompleteConverter">
 									<f:selectItem value="#{null}" itemLabel="Selecione"/>
-									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList2}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
 								</p:selectOneMenu>
 							</p:outputPanel>
 							<p:outputPanel id="dynamic2">
 								<p:selectOneMenu rendered="false" id="procedure3" binding="#{schedulingAddEditMB.procedure3}" converter="autocompleteConverter">
 									<f:selectItem value="#{null}" itemLabel="Selecione"/>
-									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList3}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
 								</p:selectOneMenu>
 							</p:outputPanel>
 							<p:outputPanel id="dynamic3">
 								<p:selectOneMenu rendered="false" id="procedure4" binding="#{schedulingAddEditMB.procedure4}" converter="autocompleteConverter">
 									<f:selectItem value="#{null}" itemLabel="Selecione"/>
-									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList4}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
 								</p:selectOneMenu>
 							</p:outputPanel>
 							<p:outputPanel id="dynamic4">
 								<p:selectOneMenu rendered="false" id="procedure5" binding="#{schedulingAddEditMB.procedure5}" converter="autocompleteConverter">
 									<f:selectItem value="#{null}" itemLabel="Selecione"/>
-									<f:selectItems value="#{schedulingAddEditMB.procedureList}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+									<f:selectItems value="#{schedulingAddEditMB.procedureList5}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
 								</p:selectOneMenu>
 							<p:commandButton disabled="#{!schedulingAddEditMB.canAdd}" icon="ui-icon-plus" value="Adicionar Serviços" onclick="addNewRemote()"/>
 							<p:outputLabel rendered="#{!schedulingAddEditMB.canAdd}" style="color:red" value="*Podem ser informados no máximo 5 Serviços"/>
 							</p:outputPanel>
 							<p:commandButton value="Confirmar Serviços" process="tabServices" onclick="PF('accordion_1').select(2)"/>
-							<p:remoteCommand name="addNewRemote" process="@this" actionListener="#{schedulingAddEditMB.addNewProcedure()}"/>
+							<p:remoteCommand name="addNewRemote" onstart="processFields" process="@this" actionListener="#{schedulingAddEditMB.addNewProcedure()}"/>
+							<p:remoteCommand name="processFields" process="tabServices" />
 						</p:tab>
 
 						<p:tab id="tabDate" title="Data e Horário">

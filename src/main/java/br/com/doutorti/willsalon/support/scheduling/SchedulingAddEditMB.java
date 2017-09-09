@@ -27,6 +27,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.google.gson.Gson;
+
 import br.com.doutorti.willsalon.model.ClientEntity;
 import br.com.doutorti.willsalon.model.EmployeeEntity;
 import br.com.doutorti.willsalon.model.ProcedureEntity;
@@ -39,17 +41,15 @@ import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
 import br.com.doutorti.willsalon.model.utils.HourUtils;
 
-import com.google.gson.Gson;
-
 //ConfigurableBeanFactory.SCOPE_SINGLETON, ConfigurableBeanFactory.SCOPE_PROTOTYPE,
 //WebApplicationContext.SCOPE_REQUEST, WebApplicationContext.SCOPE_SESSION
-@Scope( "view" )
-@Named( value = "schedulingAddEditMB" )
+@Scope("view")
+@Named(value = "schedulingAddEditMB")
 public class SchedulingAddEditMB extends BaseBeans {
 
 	private static final long serialVersionUID = 201311132355L;
 
-	Logger logger = Logger.getLogger( SchedulingAddEditMB.class );
+	Logger logger = Logger.getLogger(SchedulingAddEditMB.class);
 
 	@Inject
 	private ISchedulingRepository schedulingRepository;
@@ -107,22 +107,24 @@ public class SchedulingAddEditMB extends BaseBeans {
 	private int monthBirthDateClient;
 	private int yearBirthDateClient;
 
+	private List<ProcedureEntity> procedureList;
+
 	public SchedulingAddEditMB() {
-		logger.info( "ping" );
+		logger.info("ping");
 		this.scheduling = new SchedulingEntity();
 		this.newClient = new ClientEntity();
-		this.scheduling.setInitialDate( new Date() );
+		this.scheduling.setInitialDate(new Date());
 		canFinish = false;
-		setInternalNotify( null );
+		setInternalNotify(null);
 		Calendar c = Calendar.getInstance();
-		c.set( Calendar.MINUTE, 0 );
-		if ( c.get( Calendar.HOUR_OF_DAY ) < 8 ) {
-			c.set( Calendar.HOUR_OF_DAY, 8 );
+		c.set(Calendar.MINUTE, 0);
+		if (c.get(Calendar.HOUR_OF_DAY) < 8) {
+			c.set(Calendar.HOUR_OF_DAY, 8);
 		}
-		if ( c.get( Calendar.HOUR_OF_DAY ) > 18 ) {
-			c.add( Calendar.DAY_OF_MONTH, 1 );
-			scheduling.setInitialDate( c.getTime() );
-			c.set( Calendar.HOUR_OF_DAY, 8 );
+		if (c.get(Calendar.HOUR_OF_DAY) > 18) {
+			c.add(Calendar.DAY_OF_MONTH, 1);
+			scheduling.setInitialDate(c.getTime());
+			c.set(Calendar.HOUR_OF_DAY, 8);
 		}
 		isShow = false;
 		dateHourClosedList = new ArrayList<String>();
@@ -132,25 +134,25 @@ public class SchedulingAddEditMB extends BaseBeans {
 
 	public void addNewProcedure() {
 		canAdd = true;
-		if ( getProcedure2().isRendered() ) {
-			if ( getProcedure3().isRendered() ) {
-				if ( getProcedure4().isRendered() ) {
-					if ( !getProcedure5().isRendered() ) {
-						getProcedure5().setRendered( true );
-						RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic4" );
+		if (getProcedure2().isRendered()) {
+			if (getProcedure3().isRendered()) {
+				if (getProcedure4().isRendered()) {
+					if (!getProcedure5().isRendered()) {
+						getProcedure5().setRendered(true);
+						RequestContext.getCurrentInstance().update("formScheduling:accordion_1:dynamic4");
 						canAdd = false;
 					}
 				} else {
-					getProcedure4().setRendered( true );
-					RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic3" );
+					getProcedure4().setRendered(true);
+					RequestContext.getCurrentInstance().update("formScheduling:accordion_1:dynamic3");
 				}
 			} else {
-				getProcedure3().setRendered( true );
-				RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic2" );
+				getProcedure3().setRendered(true);
+				RequestContext.getCurrentInstance().update("formScheduling:accordion_1:dynamic2");
 			}
 		} else {
-			getProcedure2().setRendered( true );
-			RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:dynamic1" );
+			getProcedure2().setRendered(true);
+			RequestContext.getCurrentInstance().update("formScheduling:accordion_1:dynamic1");
 		}
 	}
 
@@ -160,106 +162,114 @@ public class SchedulingAddEditMB extends BaseBeans {
 	}
 
 	public void preSave() {
-		if ( scheduling.getClient() == null && newClient != null ) {
-			scheduling.setClient( newClient );
+		if (scheduling.getClient() == null && newClient != null) {
+			scheduling.setClient(newClient);
 		}
-		scheduling.setProcedureList( null );
+		scheduling.setProcedureList(null);
 
 		prepareProcedureList();
 
-		if ( scheduling.getInitialDate() != null && dateHour != null ) {
+		if (scheduling.getInitialDate() != null && dateHour != null) {
 			Calendar c1 = Calendar.getInstance();
-			c1.setTime( scheduling.getInitialDate() );
-			c1.set( Calendar.HOUR_OF_DAY, 0 );
-			c1.set( Calendar.MINUTE, 0 );
-			c1.set( Calendar.SECOND, 0 );
+			c1.setTime(scheduling.getInitialDate());
+			c1.set(Calendar.HOUR_OF_DAY, 0);
+			c1.set(Calendar.MINUTE, 0);
+			c1.set(Calendar.SECOND, 0);
 			Calendar c2 = Calendar.getInstance();
 			Date dateHourF = new Date();
 			try {
-				dateHourF = new SimpleDateFormat( "HH:mm" ).parse( dateHour );
-			} catch ( ParseException e ) {
+				dateHourF = new SimpleDateFormat("HH:mm").parse(dateHour);
+			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			c2.setTime( dateHourF );
-			c1.set( Calendar.HOUR_OF_DAY, c2.get( Calendar.HOUR_OF_DAY ) );
-			c1.set( Calendar.MINUTE, c2.get( Calendar.MINUTE ) );
-			scheduling.setInitialDate( c1.getTime() );
+			c2.setTime(dateHourF);
+			c1.set(Calendar.HOUR_OF_DAY, c2.get(Calendar.HOUR_OF_DAY));
+			c1.set(Calendar.MINUTE, c2.get(Calendar.MINUTE));
+			scheduling.setInitialDate(c1.getTime());
 		}
 	}
 
 	private void prepareProcedureList() {
-		if ( extractObject( procedure1.getSubmittedValue() ) != null ) {
-			scheduling.getProcedureList().add( extractObject( procedure1.getSubmittedValue() ) );
+		if (extractObject(procedure1.getSubmittedValue()) != null) {
+			scheduling.getProcedureList().add(extractObject(procedure1.getSubmittedValue()));
 		}
-		if ( extractObject( procedure2.getSubmittedValue() ) != null ) {
-			scheduling.getProcedureList().add( extractObject( procedure2.getSubmittedValue() ) );
+		if (extractObject(procedure2.getSubmittedValue()) != null) {
+			scheduling.getProcedureList().add(extractObject(procedure2.getSubmittedValue()));
 		}
-		if ( extractObject( procedure3.getSubmittedValue() ) != null ) {
-			scheduling.getProcedureList().add( extractObject( procedure3.getSubmittedValue() ) );
+		if (extractObject(procedure3.getSubmittedValue()) != null) {
+			scheduling.getProcedureList().add(extractObject(procedure3.getSubmittedValue()));
 		}
-		if ( extractObject( procedure4.getSubmittedValue() ) != null ) {
-			scheduling.getProcedureList().add( extractObject( procedure4.getSubmittedValue() ) );
+		if (extractObject(procedure4.getSubmittedValue()) != null) {
+			scheduling.getProcedureList().add(extractObject(procedure4.getSubmittedValue()));
 		}
-		if ( extractObject( procedure5.getSubmittedValue() ) != null ) {
-			scheduling.getProcedureList().add( extractObject( procedure5.getSubmittedValue() ) );
+		if (extractObject(procedure5.getSubmittedValue()) != null) {
+			scheduling.getProcedureList().add(extractObject(procedure5.getSubmittedValue()));
 		}
 	}
 
-	private ProcedureEntity extractObject( Object object ) {
-		if ( object == null )
+	private ProcedureEntity extractObject(Object object) {
+		if (object == null)
 			return null;
-		JSONObject jsonResult = new JSONObject( object.toString() );
-		return new Gson().fromJson( jsonResult.toString(), ProcedureEntity.class );
+		JSONObject jsonResult = new JSONObject(object.toString());
+		return new Gson().fromJson(jsonResult.toString(), ProcedureEntity.class);
 	}
 
 	public void cleanFields() {
-		scheduling.setInitialDate( new Date() );
-		scheduling.setProcedureList( getProcedureList() );
-		setDateHourList( new ArrayList<String>() );
+		scheduling.setInitialDate(new Date());
+		scheduling.setProcedureList(getProcedureList());
+		setDateHourList(new ArrayList<String>());
 	}
 
-	public void loadDateHourList( String accordionToOpen ) {
-		if ( !getEmployeeCanSchedule() )
+	public void loadDateHourList(String accordionToOpen) {
+		if (!getEmployeeCanSchedule())
 			return;
 
 		Calendar c = Calendar.getInstance();
-		c.setTime( scheduling.getInitialDate() );
-		c.set( Calendar.HOUR_OF_DAY, 0 );
-		c.set( Calendar.MINUTE, 0 );
-		c.set( Calendar.SECOND, 0 );
+		c.setTime(scheduling.getInitialDate());
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
 		Date dateI = c.getTime();
 		c = Calendar.getInstance();
-		c.setTime( scheduling.getInitialDate() );
-		c.set( Calendar.HOUR_OF_DAY, 23 );
-		c.set( Calendar.MINUTE, 59 );
-		c.set( Calendar.SECOND, 59 );
+		c.setTime(scheduling.getInitialDate());
+		c.set(Calendar.HOUR_OF_DAY, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
 		Date dateF = c.getTime();
 		try {
-			schedulingResult = schedulingRepository.findByDayAndEmployee( dateI, dateF, scheduling.getEmployee().getId() );
-		} catch ( NullPointerException e ) {
-			String script = "" + " jQuery(document).ready(function(){" + "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){" + " $(window).scrollTop(0);" + "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');" + " setTimeout(function(){location.href='http://104.236.67.194/admin'},2000)}});";
-			RequestContext.getCurrentInstance().execute( script );
+			schedulingResult = schedulingRepository.findByDayAndEmployee(dateI, dateF,
+					scheduling.getEmployee().getId());
+		} catch (NullPointerException e) {
+			String script = "" + " jQuery(document).ready(function(){"
+					+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+					+ " $(window).scrollTop(0);"
+					+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+					+ " setTimeout(function(){location.href='http://104.236.67.194/admin'},2000)}});";
+			RequestContext.getCurrentInstance().execute(script);
 		}
 
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
 		Calendar cTmp2 = Calendar.getInstance();
 		dateHourClosedList = new ArrayList<String>();
-		if ( schedulingResult != null && !schedulingResult.isEmpty() ) {
-			for ( SchedulingEntity e : schedulingResult ) {
-				cTmp.setTime( e.getInitialDate() );
-				closedList.add( HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
-				String out = String.format( "%s - %s até %s", e.getClient().getName(), e.getInitialDateFormatWithoutDay(), e.getFinalDatePrevisionFormatWithoutDay() );
-				dateHourClosedList.add( out );
+		if (schedulingResult != null && !schedulingResult.isEmpty()) {
+			for (SchedulingEntity e : schedulingResult) {
+				cTmp.setTime(e.getInitialDate());
+				closedList.add(HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.HOUR_OF_DAY)) + ":"
+						+ HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.MINUTE)));
+				String out = String.format("%s - %s até %s", e.getClient().getName(),
+						e.getInitialDateFormatWithoutDay(), e.getFinalDatePrevisionFormatWithoutDay());
+				dateHourClosedList.add(out);
 
-				cTmp2.setTime( e.getFinalDatePrevision() );
+				cTmp2.setTime(e.getFinalDatePrevision());
 
-				for ( ; cTmp.compareTo( cTmp2 ) < 0; ) {
-					cTmp.add( Calendar.MINUTE, 1 );
-					if ( cTmp.compareTo( cTmp2 ) == 0 )
+				for (; cTmp.compareTo(cTmp2) < 0;) {
+					cTmp.add(Calendar.MINUTE, 1);
+					if (cTmp.compareTo(cTmp2) == 0)
 						break;
-					closedList.add( HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+					closedList.add(HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.HOUR_OF_DAY)) + ":"
+							+ HourUtils.getCorrectHourOrMinute(cTmp.get(Calendar.MINUTE)));
 				}
 
 			}
@@ -267,216 +277,271 @@ public class SchedulingAddEditMB extends BaseBeans {
 
 		List<String> completeList = HourUtils.completeListHours();
 
-		setDateHourList( completeList );
+		setDateHourList(completeList);
 		selectItensDateHourList = new ArrayList<SelectItem>();
-		for ( String item : completeList ) {
-			SelectItem newItem = new SelectItem( item );
-			if ( closedList.contains( item ) ) {
-				newItem.setDisabled( true );
-				for ( String sc1 : dateHourClosedList ) {
-					if ( sc1.matches( ".+ - " + item + " até \\d{2}:\\d{2}" ) ) {
-						newItem.setLabel( sc1 );
+		for (String item : completeList) {
+			SelectItem newItem = new SelectItem(item);
+			if (closedList.contains(item)) {
+				newItem.setDisabled(true);
+				for (String sc1 : dateHourClosedList) {
+					if (sc1.matches(".+ - " + item + " até \\d{2}:\\d{2}")) {
+						newItem.setLabel(sc1);
 					}
 				}
 			}
-			selectItensDateHourList.add( newItem );
+			selectItensDateHourList.add(newItem);
 		}
-		selectItensDateHourBinding.setValue( selectItensDateHourList );
+		selectItensDateHourBinding.setValue(selectItensDateHourList);
 
-		if ( accordionToOpen.equals( "null" ) )
+		if (accordionToOpen.equals("null"))
 			return;
 
-		RequestContext.getCurrentInstance().execute( String.format( "PF('accordion_1').select(%s)", accordionToOpen ) );
+		RequestContext.getCurrentInstance().execute(String.format("PF('accordion_1').select(%s)", accordionToOpen));
 	}
 
-	public List<ClientEntity> autocompleteClient( String query ) {
-		List<ClientEntity> result = clientRepository.findByNameContaining( query );
-		if ( result == null || result.isEmpty() ) {
-			setShowButtonNewClient( true );
+	public List<ClientEntity> autocompleteClient(String query) {
+		List<ClientEntity> result = clientRepository.findByNameContaining(query);
+		if (result == null || result.isEmpty()) {
+			setShowButtonNewClient(true);
 		} else {
-			setShowButtonNewClient( false );
+			setShowButtonNewClient(false);
 		}
-		RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:buttonNewCliente" );
+		RequestContext.getCurrentInstance().update("formScheduling:accordion_1:buttonNewCliente");
 		return result;
 	}
 
-	public List<EmployeeEntity> autocompleteEmployee( String query ) {
-		return employeeRepository.findByNameContaining( query );
+	public List<EmployeeEntity> autocompleteEmployee(String query) {
+		return employeeRepository.findByNameContaining(query);
 	}
 
 	public SchedulingEntity getScheduling() {
 		return this.scheduling;
 	}
 
-	public void setScheduling( SchedulingEntity scheduling ) {
+	public void setScheduling(SchedulingEntity scheduling) {
 		this.scheduling = scheduling;
 	}
 
 	public void add() {
-		this.title = this.getResourceProperty( "labels", "button_add" );
+		this.title = this.getResourceProperty("labels", "button_add");
 	}
 
-	public void update( Long id ) {
-		this.scheduling = this.schedulingRepository.findOne( id );
-		this.title = this.getResourceProperty( "labels", "button_update" );
+	public void update(Long id) {
+		this.scheduling = this.schedulingRepository.findOne(id);
+		this.title = this.getResourceProperty("labels", "button_update");
 	}
 
 	public void prepareFinalDateProvision() {
-		setInternalNotify( null );
+		setInternalNotify(null);
 		canFinish = false;
 		preSave();
-		if ( !scheduling.getProcedureList().isEmpty() ) {
-			if ( schedulingResult == null || schedulingResult.isEmpty() ) {
+		if (!scheduling.getProcedureList().isEmpty()) {
+			if (schedulingResult == null || schedulingResult.isEmpty()) {
 				canFinish = true;
 			}
-			scheduling.setInitialDate( HourUtils.zeroMilli( scheduling.getInitialDate() ) );
-			scheduling.setFinalDatePrevision( HourUtils.zeroMilli( scheduling.getFinalDatePrevision() ) );
-			for ( SchedulingEntity scheduled : schedulingResult ) {
-				scheduled.setInitialDate( HourUtils.zeroMilli( scheduled.getInitialDate() ) );
-				if ( scheduling.getInitialDate().before( scheduled.getInitialDate() ) && scheduling.getFinalDatePrevision().after( scheduled.getInitialDate() ) ) {
-					setInternalNotify( "Não existe tempo suficiente para finalizar todos os serviços desse agendamento, tente outro horário." );
+			scheduling.setInitialDate(HourUtils.zeroMilli(scheduling.getInitialDate()));
+			scheduling.setFinalDatePrevision(HourUtils.zeroMilli(scheduling.getFinalDatePrevision()));
+			for (SchedulingEntity scheduled : schedulingResult) {
+				scheduled.setInitialDate(HourUtils.zeroMilli(scheduled.getInitialDate()));
+				if (scheduling.getInitialDate().before(scheduled.getInitialDate())
+						&& scheduling.getFinalDatePrevision().after(scheduled.getInitialDate())) {
+					setInternalNotify(
+							"Não existe tempo suficiente para finalizar todos os serviços desse agendamento, tente outro horário.");
 					canFinish = false;
-					RequestContext.getCurrentInstance().execute( "PF('dialog_erro').show()" );
-					RequestContext.getCurrentInstance().update( "formScheduling:dialog_erro" );
+					RequestContext.getCurrentInstance().execute("PF('dialog_erro').show()");
+					RequestContext.getCurrentInstance().update("formScheduling:dialog_erro");
 					return;
 				} else {
 					canFinish = true;
 				}
 			}
-			RequestContext.getCurrentInstance().execute( "PF('accordion_1').select(3)" );
+			RequestContext.getCurrentInstance().execute("PF('accordion_1').select(3)");
 		}
 	}
 
 	public void save() throws IOException {
 		try {
 			preSave();
-			if ( this.scheduling != null ) {
-				scheduling.setFinished( false );
+			if (this.scheduling != null) {
+				scheduling.setFinished(false);
 				// Add
 
 				Map<SchedulingEntity, Boolean> mapToSave = new HashMap<SchedulingEntity, Boolean>();
 
-				mapToSave.put( this.scheduling, true );
+				mapToSave.put(this.scheduling, true);
 
-				if ( repeatRule == null ) {
-					scheduling.setWasRepetition( false );
-					scheduling.setHistory( getHistory() );
-					this.schedulingRepository.save( scheduling );
+				if (repeatRule == null) {
+					scheduling.setWasRepetition(false);
+					scheduling.setHistory(getHistory());
+					this.schedulingRepository.save(scheduling);
 				}
 
-				if ( repeatRule != null ) {
-					for ( int i = 1; true; i++ ) {
+				if (repeatRule != null) {
+					for (int i = 1; true; i++) {
 						boolean canSave = true;
 						SchedulingEntity newScheduling = new SchedulingEntity();
-						BeanUtils.copyProperties( scheduling, newScheduling, "id" );
-						newScheduling.setProcedureList( new ArrayList<ProcedureEntity>( newScheduling.getProcedureList() ) );
+						BeanUtils.copyProperties(scheduling, newScheduling, "id");
+						newScheduling
+								.setProcedureList(new ArrayList<ProcedureEntity>(newScheduling.getProcedureList()));
 						Calendar c = Calendar.getInstance();
-						c.setTime( newScheduling.getInitialDate() );
-						c.add( Calendar.DAY_OF_MONTH, repeatRule.days * i );
+						c.setTime(newScheduling.getInitialDate());
+						c.add(Calendar.DAY_OF_MONTH, repeatRule.days * i);
 						// agendar repetições apenas para o ano corrente
-						if ( c.get( Calendar.YEAR ) > Calendar.getInstance().get( Calendar.YEAR ) ) {
+						if (c.get(Calendar.YEAR) > Calendar.getInstance().get(Calendar.YEAR)) {
 							break;
 						}
-						newScheduling.setInitialDate( c.getTime() );
+						newScheduling.setInitialDate(c.getTime());
 
-						List<SchedulingEntity> internalSchedulingResult = schedulingRepository.findByDayAndEmployee( getCorrectHourDay( newScheduling.getInitialDate(), true ), getCorrectHourDay( newScheduling.getFinalDatePrevision(), false ), newScheduling.getEmployee().getId() );
+						List<SchedulingEntity> internalSchedulingResult = schedulingRepository.findByDayAndEmployee(
+								getCorrectHourDay(newScheduling.getInitialDate(), true),
+								getCorrectHourDay(newScheduling.getFinalDatePrevision(), false),
+								newScheduling.getEmployee().getId());
 
-						for ( SchedulingEntity scheduled : internalSchedulingResult ) {
-							if ( newScheduling.getInitialDate().before( scheduled.getInitialDate() ) && newScheduling.getFinalDatePrevision().after( scheduled.getInitialDate() ) ) {
+						for (SchedulingEntity scheduled : internalSchedulingResult) {
+							if (newScheduling.getInitialDate().before(scheduled.getInitialDate())
+									&& newScheduling.getFinalDatePrevision().after(scheduled.getInitialDate())) {
 								canSave = false;
 								break;
 							}
 						}
 
-						mapToSave.put( newScheduling, canSave );
+						mapToSave.put(newScheduling, canSave);
 					}
 
 					List<SchedulingEntity> schedulingListToSave = new ArrayList<SchedulingEntity>();
 					List<SchedulingEntity> blackList = new ArrayList<SchedulingEntity>();
-					for ( SchedulingEntity entity : mapToSave.keySet() ) {
-						entity.setWasRepetition( true );
-						if ( mapToSave.get( entity ) ) {
-							entity.setHistory( getHistory() );
-							schedulingListToSave.add( entity );
+					for (SchedulingEntity entity : mapToSave.keySet()) {
+						entity.setWasRepetition(true);
+						if (mapToSave.get(entity)) {
+							entity.setHistory(getHistory());
+							schedulingListToSave.add(entity);
 						} else {
-							blackList.add( entity );
+							blackList.add(entity);
 						}
 					}
 
-					this.schedulingRepository.save( schedulingListToSave );
+					this.schedulingRepository.save(schedulingListToSave);
 
-					if ( !blackList.isEmpty() ) {
+					if (!blackList.isEmpty()) {
 						List<String> hours = new ArrayList<String>();
-						for ( SchedulingEntity item : blackList ) {
-							hours.add( item.getInitialDateFormatWithDayAndHours() );
+						for (SchedulingEntity item : blackList) {
+							hours.add(item.getInitialDateFormatWithDayAndHours());
 						}
 						alertMessage = hours.toString();
-						RequestContext.getCurrentInstance().execute( "PF('dialog_conflit').show()" );
-						RequestContext.getCurrentInstance().update( "formScheduling:dialog_conflit" );
+						RequestContext.getCurrentInstance().execute("PF('dialog_conflit').show()");
+						RequestContext.getCurrentInstance().update("formScheduling:dialog_conflit");
 					} else {
-						FacesContext.getCurrentInstance().getExternalContext().redirect( "list.faces" );
+						FacesContext.getCurrentInstance().getExternalContext().redirect("list.faces");
 					}
 				}
 			}
-			RequestContext.getCurrentInstance().execute( "PF('dialog_saved').show()" );
-		} catch ( Exception e ) {
-			String script = "" + " jQuery(document).ready(function(){" + "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){" + " $(window).scrollTop(0);" + "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');" + " setTimeout(function(){location.href='http://104.236.67.194/admin'},2000)}});";
-			RequestContext.getCurrentInstance().execute( script );
+			RequestContext.getCurrentInstance().execute("PF('dialog_saved').show()");
+		} catch (Exception e) {
+			String script = "" + " jQuery(document).ready(function(){"
+					+ "	if(location.pathname.endsWith('pages/clientScheduling/addScheduling.faces')){"
+					+ " $(window).scrollTop(0);"
+					+ "	alert('Ops, ocorreu um erro. Você será direcionado para a tela inicial...');"
+					+ " setTimeout(function(){location.href='http://104.236.67.194/admin'},2000)}});";
+			RequestContext.getCurrentInstance().execute(script);
 		}
 	}
 
 	public void addNewClient() {
-		if ( newClient != null ) {
+		if (newClient != null) {
 			Calendar birthDate = Calendar.getInstance();
-			birthDate.set( Calendar.DAY_OF_MONTH, dayBirthDateClient );
-			birthDate.set( Calendar.MONDAY, monthBirthDateClient - 1 );
-			birthDate.set( Calendar.YEAR, yearBirthDateClient );
-			newClient.setBirthDate( birthDate.getTime() );
-			newClient.setPhone( newClient.getPhone().replaceAll( "\\(", "" ).replaceAll( "\\)", "" ).replaceAll( "-", "" ).replaceAll( " ", "" ).trim() );
-			this.clientRepository.save( this.newClient );
-			scheduling.setClient( newClient );
-			RequestContext.getCurrentInstance().execute( "PF('dialog_newClient').hide()" );
-			setShowButtonNewClient( false );
-			RequestContext.getCurrentInstance().update( "formScheduling:accordion_1:buttonNewCliente" );
+			birthDate.set(Calendar.DAY_OF_MONTH, dayBirthDateClient);
+			birthDate.set(Calendar.MONDAY, monthBirthDateClient - 1);
+			birthDate.set(Calendar.YEAR, yearBirthDateClient);
+			newClient.setBirthDate(birthDate.getTime());
+			newClient.setPhone(newClient.getPhone().replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("-", "")
+					.replaceAll(" ", "").trim());
+			this.clientRepository.save(this.newClient);
+			scheduling.setClient(newClient);
+			RequestContext.getCurrentInstance().execute("PF('dialog_newClient').hide()");
+			setShowButtonNewClient(false);
+			RequestContext.getCurrentInstance().update("formScheduling:accordion_1:buttonNewCliente");
 		}
 	}
 
 	private String getHistory() {
 		String loggedUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		String actualDate = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" ).format( new Date() );
-		return String.format( "Operação realizada por %s às %s", loggedUser, actualDate );
+		String actualDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+		return String.format("Operação realizada por %s às %s", loggedUser, actualDate);
 	}
 
-	public Date getCorrectHourDay( Date date, boolean init ) {
+	public Date getCorrectHourDay(Date date, boolean init) {
 		Calendar c = Calendar.getInstance();
-		c.setTime( date );
-		c.set( Calendar.HOUR_OF_DAY, init ? 0 : 23 );
-		c.set( Calendar.MINUTE, init ? 0 : 59 );
-		c.set( Calendar.SECOND, init ? 0 : 59 );
+		c.setTime(date);
+		c.set(Calendar.HOUR_OF_DAY, init ? 0 : 23);
+		c.set(Calendar.MINUTE, init ? 0 : 59);
+		c.set(Calendar.SECOND, init ? 0 : 59);
 		return c.getTime();
 	}
 
 	public Boolean getEmployeeCanSchedule() {
-		return getScheduling().getEmployee() == null || ( getScheduling().getEmployee() != null && !getScheduling().getEmployee().getMeetByOrder() );
+		return getScheduling().getEmployee() == null
+				|| (getScheduling().getEmployee() != null && !getScheduling().getEmployee().getMeetByOrder());
 	}
 
 	public String getTitle() {
 		return this.title;
 	}
 
-	public void setTitle( String title ) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	private String getResourceProperty( String resource, String label ) {
+	private String getResourceProperty(String resource, String label) {
 		Application application = this.context.getApplication();
-		ResourceBundle bundle = application.getResourceBundle( this.context, resource );
+		ResourceBundle bundle = application.getResourceBundle(this.context, resource);
 
-		return bundle.getString( label );
+		return bundle.getString(label);
+	}
+
+	public List<ProcedureEntity> getProcedureList1() {
+		return getProcedureList();
+	}
+
+	public List<ProcedureEntity> getProcedureList2() {
+		getProcedureList().remove(extractObject(procedure1.getSubmittedValue()));
+		return getProcedureList();
+	}
+
+	public List<ProcedureEntity> getProcedureList3() {
+		getProcedureList().remove(extractObject(procedure1.getSubmittedValue()));
+		getProcedureList().remove(extractObject(procedure2.getSubmittedValue()));
+		return getProcedureList();
+	}
+
+	public List<ProcedureEntity> getProcedureList4() {
+		getProcedureList().remove(extractObject(procedure1.getSubmittedValue()));
+		getProcedureList().remove(extractObject(procedure2.getSubmittedValue()));
+		getProcedureList().remove(extractObject(procedure3.getSubmittedValue()));
+		return getProcedureList();
+	}
+
+	public List<ProcedureEntity> getProcedureList5() {
+		getProcedureList().remove(extractObject(procedure1.getSubmittedValue()));
+		getProcedureList().remove(extractObject(procedure2.getSubmittedValue()));
+		getProcedureList().remove(extractObject(procedure3.getSubmittedValue()));
+		getProcedureList().remove(extractObject(procedure4.getSubmittedValue()));
+		return getProcedureList();
 	}
 
 	public List<ProcedureEntity> getProcedureList() {
-		return procedureRepository.findAllActivies();
+		if (procedureList == null) {
+			procedureList = procedureRepository.findAllActivies();
+		}
+		return procedureList;
+	}
+
+	public void setProcedureList(List<ProcedureEntity> procedureList) {
+		this.procedureList = procedureList;
+	}
+
+	public List<ProcedureEntity> getProcedureListDynamic() {
+		List<ProcedureEntity> result = procedureRepository.findAllActivies();
+		return result;
 	}
 
 	public String getDateHour() {
@@ -484,18 +549,18 @@ public class SchedulingAddEditMB extends BaseBeans {
 	}
 
 	public List<String> getDateHourList() {
-		if ( dateHourList == null ) {
+		if (dateHourList == null) {
 			dateHourList = new ArrayList<String>();
 		}
 		return dateHourList;
 	}
 
-	public void setDateHour( String dateHour ) {
+	public void setDateHour(String dateHour) {
 		this.dateHour = dateHour;
 	}
 
 	public String getMaxDate() {
-		return new SimpleDateFormat( "dd/MM/yyyy" ).format( new Date() );
+		return new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 	}
 
 	// public List<ProcedureEntity> getSelectedProcedureList() {
@@ -514,7 +579,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return canAdd;
 	}
 
-	public void setCanAdd( boolean canAdd ) {
+	public void setCanAdd(boolean canAdd) {
 		this.canAdd = canAdd;
 	}
 
@@ -522,7 +587,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return procedure1;
 	}
 
-	public void setProcedure1( SelectOneMenu procedure1 ) {
+	public void setProcedure1(SelectOneMenu procedure1) {
 		this.procedure1 = procedure1;
 	}
 
@@ -530,7 +595,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return procedure2;
 	}
 
-	public void setProcedure2( SelectOneMenu procedure2 ) {
+	public void setProcedure2(SelectOneMenu procedure2) {
 		this.procedure2 = procedure2;
 	}
 
@@ -538,7 +603,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return procedure3;
 	}
 
-	public void setProcedure3( SelectOneMenu procedure3 ) {
+	public void setProcedure3(SelectOneMenu procedure3) {
 		this.procedure3 = procedure3;
 	}
 
@@ -546,7 +611,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return procedure4;
 	}
 
-	public void setProcedure4( SelectOneMenu procedure4 ) {
+	public void setProcedure4(SelectOneMenu procedure4) {
 		this.procedure4 = procedure4;
 	}
 
@@ -554,7 +619,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return procedure5;
 	}
 
-	public void setProcedure5( SelectOneMenu procedure5 ) {
+	public void setProcedure5(SelectOneMenu procedure5) {
 		this.procedure5 = procedure5;
 	}
 
@@ -562,11 +627,11 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return isShow;
 	}
 
-	public void setIsShow( Boolean isShow ) {
+	public void setIsShow(Boolean isShow) {
 		this.isShow = isShow;
 	}
 
-	public void setDateHourList( List<String> dateHourList ) {
+	public void setDateHourList(List<String> dateHourList) {
 		this.dateHourList = dateHourList;
 	}
 
@@ -574,7 +639,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return dateHourClosedList;
 	}
 
-	public void setDateHourClosedList( List<String> dateHourClosedList ) {
+	public void setDateHourClosedList(List<String> dateHourClosedList) {
 		this.dateHourClosedList = dateHourClosedList;
 	}
 
@@ -582,7 +647,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return canFinish;
 	}
 
-	public void setCanFinish( Boolean canFinish ) {
+	public void setCanFinish(Boolean canFinish) {
 		this.canFinish = canFinish;
 	}
 
@@ -590,7 +655,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return internalNotify;
 	}
 
-	public void setInternalNotify( String internalNotify ) {
+	public void setInternalNotify(String internalNotify) {
 		this.internalNotify = internalNotify;
 	}
 
@@ -598,7 +663,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return repeatRule;
 	}
 
-	public void setRepeatRule( RepeatRule repeatRule ) {
+	public void setRepeatRule(RepeatRule repeatRule) {
 		this.repeatRule = repeatRule;
 	}
 
@@ -606,7 +671,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return alertMessage;
 	}
 
-	public void setAlertMessage( String alertMessage ) {
+	public void setAlertMessage(String alertMessage) {
 		this.alertMessage = alertMessage;
 	}
 
@@ -614,7 +679,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return selectItensDateHourList;
 	}
 
-	public void setSelectItensDateHourList( List<SelectItem> selectItensDateHourList ) {
+	public void setSelectItensDateHourList(List<SelectItem> selectItensDateHourList) {
 		this.selectItensDateHourList = selectItensDateHourList;
 	}
 
@@ -622,7 +687,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return selectItensDateHourBinding;
 	}
 
-	public void setSelectItensDateHourBinding( UISelectItems selectItensDateHourBinding ) {
+	public void setSelectItensDateHourBinding(UISelectItems selectItensDateHourBinding) {
 		this.selectItensDateHourBinding = selectItensDateHourBinding;
 	}
 
@@ -630,7 +695,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return showButtonNewClient;
 	}
 
-	public void setShowButtonNewClient( Boolean showButtonNewClient ) {
+	public void setShowButtonNewClient(Boolean showButtonNewClient) {
 		this.showButtonNewClient = showButtonNewClient;
 	}
 
@@ -638,7 +703,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return newClient;
 	}
 
-	public void setNewClient( ClientEntity newClient ) {
+	public void setNewClient(ClientEntity newClient) {
 		this.newClient = newClient;
 	}
 
@@ -646,7 +711,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return dayBirthDateClient;
 	}
 
-	public void setDayBirthDateClient( int dayBirthDateClient ) {
+	public void setDayBirthDateClient(int dayBirthDateClient) {
 		this.dayBirthDateClient = dayBirthDateClient;
 	}
 
@@ -654,7 +719,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return monthBirthDateClient;
 	}
 
-	public void setMonthBirthDateClient( int monthBirthDateClient ) {
+	public void setMonthBirthDateClient(int monthBirthDateClient) {
 		this.monthBirthDateClient = monthBirthDateClient;
 	}
 
@@ -662,29 +727,29 @@ public class SchedulingAddEditMB extends BaseBeans {
 		return yearBirthDateClient;
 	}
 
-	public void setYearBirthDateClient( int yeahBirthDateClient ) {
+	public void setYearBirthDateClient(int yeahBirthDateClient) {
 		this.yearBirthDateClient = yeahBirthDateClient;
 	}
 
 	public List<Integer> getDayList() {
 		List<Integer> result = new ArrayList<Integer>();
-		for ( int i = 1; i <= 31; i++ )
-			result.add( i );
+		for (int i = 1; i <= 31; i++)
+			result.add(i);
 		return result;
 	}
 
 	public List<Integer> getMonthList() {
 		List<Integer> result = new ArrayList<Integer>();
-		for ( int i = 1; i <= 12; i++ )
-			result.add( i );
+		for (int i = 1; i <= 12; i++)
+			result.add(i);
 		return result;
 	}
 
 	public List<Integer> getYearList() {
 		List<Integer> result = new ArrayList<Integer>();
-		int currentYear = Calendar.getInstance().get( Calendar.YEAR );
-		for ( int i = currentYear - 80; i <= currentYear; i++ )
-			result.add( i );
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		for (int i = currentYear - 80; i <= currentYear; i++)
+			result.add(i);
 		return result;
 	}
 

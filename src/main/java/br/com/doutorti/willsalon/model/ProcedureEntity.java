@@ -24,7 +24,7 @@ public class ProcedureEntity extends BaseEntities<Long> {
 	private BigDecimal value;
 
 	private Boolean active;
-	
+
 	private Boolean administrative;
 
 	public ProcedureEntity() {
@@ -73,6 +73,31 @@ public class ProcedureEntity extends BaseEntities<Long> {
 
 	public void setAdministrative(Boolean administrative) {
 		this.administrative = administrative;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((active == null) ? 0 : active.hashCode());
+		result = prime * result + ((administrative == null) ? 0 : administrative.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		ProcedureEntity other = (ProcedureEntity) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
 	}
 
 }
