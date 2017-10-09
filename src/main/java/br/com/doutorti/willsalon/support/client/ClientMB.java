@@ -6,10 +6,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.context.RequestContext;
 import org.springframework.context.annotation.Scope;
 
 import br.com.doutorti.willsalon.model.ClientEntity;
+import br.com.doutorti.willsalon.model.SchedulingEntity;
 import br.com.doutorti.willsalon.model.repositories.IClientRepository;
+import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
 
 // ConfigurableBeanFactory.SCOPE_SINGLETON, ConfigurableBeanFactory.SCOPE_PROTOTYPE,
@@ -25,6 +28,9 @@ public class ClientMB extends BaseBeans {
 
 	@Inject
 	private IClientRepository clientRepository;
+
+	@Inject
+	private ISchedulingRepository schedulingRepository;
 
 	private List<ClientEntity> clients;
 
@@ -60,7 +66,24 @@ public class ClientMB extends BaseBeans {
 
 	public void delete() {
 		if ( getIdToDelete() != null ) {
-			this.clientRepository.delete( getIdToDelete() );
+			ClientEntity loadedClient = clientRepository.findOne( getIdToDelete() );
+			Long foundClient = clientRepository.findClientWithSamePhoneAndBirthDate( loadedClient.getPhone(), loadedClient.getBirthDate(), loadedClient.getId() );
+
+			// transferindo os agendamentos para o novo cliente
+			if ( foundClient != null ) {
+				ClientEntity loadedFoundClient = clientRepository.findOne(foundClient);
+				List<SchedulingEntity> resultSchedulings = this.schedulingRepository.findByClient( loadedClient.getId() );
+				for ( SchedulingEntity s : resultSchedulings ) {
+					s.setClient( loadedFoundClient );
+				}
+				schedulingRepository.save( resultSchedulings );
+			}
+
+			try{
+				this.clientRepository.delete( getIdToDelete() );
+			}catch (org.springframework.dao.DataIntegrityViolationException e){
+				RequestContext.getCurrentInstance().execute( "alert('Não é possivel remover o Cliente pois ele possui agendamentos.')" );
+			}
 		}
 		filterCliente();
 	}
