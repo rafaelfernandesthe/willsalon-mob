@@ -314,9 +314,15 @@ public class SchedulingAddEditMB extends BaseBeans {
 						Calendar c = Calendar.getInstance();
 						c.setTime( newScheduling.getInitialDate() );
 						c.add( Calendar.DAY_OF_MONTH, repeatRule.days * i );
-						// agendar repetições apenas para o ano corrente
+						// old -> agendar repetições apenas para o ano corrente
+						// new -> agendar repetições para prox ano a partir de outubro
 						if ( c.get( Calendar.YEAR ) > Calendar.getInstance().get( Calendar.YEAR ) ) {
-							break;
+							if(Calendar.getInstance().get(Calendar.MONTH) < 9 ){
+								break;
+							}
+							if (( c.get( Calendar.YEAR ) - Calendar.getInstance().get( Calendar.YEAR )) > 1){
+								break;
+							}
 						}
 						newScheduling.setInitialDate( c.getTime() );
 
