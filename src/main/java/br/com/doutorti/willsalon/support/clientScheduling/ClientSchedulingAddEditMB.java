@@ -253,6 +253,9 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 			return;
 
 		RequestContext.getCurrentInstance().execute( String.format( "PF('accordion_1').select(%s)", accordionToOpen ) );
+		
+		if(accordionToOpen.equals( "2" ))
+			RequestContext.getCurrentInstance().execute("window.location = '#formScheduling:accordion_1:tabDate'");
 	}
 
 	public List<ClientEntity> autocompleteClient( String query ) {
