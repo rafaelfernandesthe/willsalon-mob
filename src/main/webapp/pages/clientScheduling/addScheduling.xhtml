@@ -22,7 +22,7 @@ fbq('track', 'Lead');
 <!-- DO NOT MODIFY -->
 <!-- End Facebook Pixel Code -->
 </h:outputScript>
-		
+
 		<p:outputLabel value="Seja Bem-Vindo #{clientSchedulingAddEditMB.scheduling.client.name}" style="color:green;text-align:center;"/>
 		<p:button value="Esqueceu seu horário? Clique aqui!" href="/pages/clientScheduling/list.faces?clientId=#{clientSchedulingAddEditMB.clientId}"  ajax="false"  icon="ui-icon-search" />
 		<h:form id="formScheduling">
@@ -71,7 +71,7 @@ fbq('track', 'Lead');
 							<div class="ui-grid-row">
 								<p:outputLabel for="date" value="#{labels.scheduling_date}"/>
 								<p:calendar id="date" value="#{clientSchedulingAddEditMB.scheduling.initialDate}" mode="inline" locale="pt_BR" required="true" 
-								pattern="dd/MM/yyyy" mindate="new Date()">
+								pattern="dd/MM/yyyy" mindate="new Date()" maxdate="#{clientSchedulingAddEditMB.maxDateClientScheduling()}">
 									<p:ajax event="dateSelect" listener="#{clientSchedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour dateHourMessage previsionDate formScheduling:sumary"/>
 								</p:calendar>
 							</div>

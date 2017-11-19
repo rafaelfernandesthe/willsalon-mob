@@ -253,9 +253,9 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 			return;
 
 		RequestContext.getCurrentInstance().execute( String.format( "PF('accordion_1').select(%s)", accordionToOpen ) );
-		
-		if(accordionToOpen.equals( "2" ))
-			RequestContext.getCurrentInstance().execute("window.location = '#formScheduling:accordion_1:tabDate'");
+
+		if ( accordionToOpen.equals( "2" ) )
+			RequestContext.getCurrentInstance().execute( "window.location = '#formScheduling:accordion_1:tabDate'" );
 	}
 
 	public List<ClientEntity> autocompleteClient( String query ) {
@@ -404,6 +404,10 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	public String getMaxDate() {
 		return new SimpleDateFormat( "dd/MM/yyyy" ).format( new Date() );
+	}
+
+	public String maxDateClientScheduling() {
+		return "31/12/" + Calendar.getInstance().get( Calendar.YEAR );
 	}
 
 	public List<ProcedureEntity> getSelectedProcedureList() {
