@@ -22,7 +22,7 @@ import br.com.doutorti.willsalon.model.repositories.IClientRepository;
 import br.com.doutorti.willsalon.model.repositories.IEmployeeRepository;
 import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
-import br.com.doutorti.willsalon.model.utils.HourUtils;
+import br.com.doutorti.willsalon.model.utils.DateHourUtils;
 
 // ConfigurableBeanFactory.SCOPE_SINGLETON, ConfigurableBeanFactory.SCOPE_PROTOTYPE,
 // WebApplicationContext.SCOPE_REQUEST, WebApplicationContext.SCOPE_SESSION
@@ -89,7 +89,7 @@ public class SchedulingMB extends BaseBeans {
 			for ( SchedulingEntity e : schedulings ) {
 				Calendar cTmp = Calendar.getInstance();
 				cTmp.setTime( e.getInitialDate() );
-				closedList.add( HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+				closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
 				String out = String.format( "%s - %s até %s", e.getClient().getName(), e.getInitialDateFormatWithoutDay(), e.getFinalDatePrevisionFormatWithoutDay() );
 				dateHourClosedList.add( out );
 
@@ -100,12 +100,12 @@ public class SchedulingMB extends BaseBeans {
 					cTmp.add( Calendar.MINUTE, 1 );
 					if ( cTmp.compareTo( cTmp2 ) == 0 )
 						break;
-					closedList.add( HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+					closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
 				}
 
 			}
 
-			List<String> completeList = HourUtils.completeListHours();
+			List<String> completeList = DateHourUtils.completeListHours();
 
 			completeList.removeAll( closedList );
 

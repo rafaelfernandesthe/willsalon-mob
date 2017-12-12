@@ -35,7 +35,7 @@ import br.com.doutorti.willsalon.model.repositories.IEmployeeRepository;
 import br.com.doutorti.willsalon.model.repositories.IProcedureRepository;
 import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
-import br.com.doutorti.willsalon.model.utils.HourUtils;
+import br.com.doutorti.willsalon.model.utils.DateHourUtils;
 
 //ConfigurableBeanFactory.SCOPE_SINGLETON, ConfigurableBeanFactory.SCOPE_PROTOTYPE,
 //WebApplicationContext.SCOPE_REQUEST, WebApplicationContext.SCOPE_SESSION
@@ -190,7 +190,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		if ( schedulingResult != null && !schedulingResult.isEmpty() ) {
 			for ( SchedulingEntity e : schedulingResult ) {
 				cTmp.setTime( e.getInitialDate() );
-				closedList.add( HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+				closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
 				String out = String.format( "%s - %s até %s", e.getClient().getName(), e.getInitialDateFormatWithoutDay(), e.getFinalDatePrevisionFormatWithoutDay() );
 				dateHourClosedList.add( out );
 
@@ -200,13 +200,13 @@ public class SchedulingAddEditMB extends BaseBeans {
 					cTmp.add( Calendar.MINUTE, 1 );
 					if ( cTmp.compareTo( cTmp2 ) == 0 )
 						break;
-					closedList.add( HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + HourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+					closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
 				}
 
 			}
 		}
 
-		List<String> completeList = HourUtils.completeListHours();
+		List<String> completeList = DateHourUtils.completeListHours();
 
 		setDateHourList( completeList );
 		selectItensDateHourList = new ArrayList<SelectItem>();
@@ -270,10 +270,10 @@ public class SchedulingAddEditMB extends BaseBeans {
 			if ( schedulingResult == null || schedulingResult.isEmpty() ) {
 				canFinish = true;
 			}
-			scheduling.setInitialDate( HourUtils.zeroMilli( scheduling.getInitialDate() ) );
-			scheduling.setFinalDatePrevision( HourUtils.zeroMilli( scheduling.getFinalDatePrevision() ) );
+			scheduling.setInitialDate( DateHourUtils.zeroMilli( scheduling.getInitialDate() ) );
+			scheduling.setFinalDatePrevision( DateHourUtils.zeroMilli( scheduling.getFinalDatePrevision() ) );
 			for ( SchedulingEntity scheduled : schedulingResult ) {
-				scheduled.setInitialDate( HourUtils.zeroMilli( scheduled.getInitialDate() ) );
+				scheduled.setInitialDate( DateHourUtils.zeroMilli( scheduled.getInitialDate() ) );
 				if ( scheduling.getInitialDate().before( scheduled.getInitialDate() ) && scheduling.getFinalDatePrevision().after( scheduled.getInitialDate() ) ) {
 					setInternalNotify( "Não existe tempo suficiente para finalizar todos os serviços desse agendamento, tente outro horário." );
 					canFinish = false;

@@ -7,12 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class HourUtils {
+public class DateHourUtils {
 
 	public static final Integer SINCE_HOUR = 9;
 	public static final Integer UNTIL_HOUR = 21;
 	public static final Integer INTERVAL_MIN = 30;
 	public static SimpleDateFormat sdfHHmm = new SimpleDateFormat("HH:mm");
+	public static SimpleDateFormat ddMMyyyy = new SimpleDateFormat("dd/MM/yyyy");
 
 	public static List<String> completeListHours() {
 		List<String> completeList = new ArrayList<String>();
