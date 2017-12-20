@@ -1,5 +1,6 @@
 package br.com.doutorti.willsalon.support.holiday;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -13,13 +14,13 @@ import br.com.doutorti.willsalon.model.HolidayEntity;
 import br.com.doutorti.willsalon.model.repositories.IHolidayRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
 
-@Scope( "view" )
-@Named( value = "holidayMB" )
+@Scope("view")
+@Named(value = "holidayMB")
 public class HolidayMB extends BaseBeans {
 
 	private static final long serialVersionUID = 538532308955296799L;
 
-	Logger logger = Logger.getLogger( HolidayMB.class );
+	Logger logger = Logger.getLogger(HolidayMB.class);
 
 	@Inject
 	private IHolidayRepository holidayRepository;
@@ -33,14 +34,23 @@ public class HolidayMB extends BaseBeans {
 	private Integer filterYear;
 
 	public HolidayMB() {
-		logger.info( "ping" );
+		filterYear = Calendar.getInstance().get(Calendar.YEAR);
 	}
 
 	public void filterHoliday() {
-		if ( filterYear == null ) {
-			filterYear = Calendar.getInstance().get( Calendar.YEAR );
+		if (filterYear == null) {
+			filterYear = Calendar.getInstance().get(Calendar.YEAR);
 		}
-		this.holidays = this.holidayRepository.findByYear( filterYear );
+		this.holidays = this.holidayRepository.findByYear(filterYear);
+	}
+
+	public List<Integer> getYearsToFind() {
+		List<Integer> result = new ArrayList<Integer>();
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		for (int i = -2; i < 4; i++) {
+			result.add(currentYear + i);
+		}
+		return result;
 	}
 
 	public void onLoad() {
@@ -51,13 +61,13 @@ public class HolidayMB extends BaseBeans {
 		return this.id;
 	}
 
-	public void setId( Long id ) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
 	public void delete() {
-		if ( getIdToDelete() != null ) {
-			this.holidayRepository.delete( getIdToDelete() );
+		if (getIdToDelete() != null) {
+			this.holidayRepository.delete(getIdToDelete());
 		}
 		filterHoliday();
 	}
@@ -66,7 +76,7 @@ public class HolidayMB extends BaseBeans {
 		return idToDelete;
 	}
 
-	public void setIdToDelete( Long idToDelete ) {
+	public void setIdToDelete(Long idToDelete) {
 		this.idToDelete = idToDelete;
 	}
 
@@ -74,7 +84,7 @@ public class HolidayMB extends BaseBeans {
 		return holidays;
 	}
 
-	public void setHolidays( List<HolidayEntity> holidays ) {
+	public void setHolidays(List<HolidayEntity> holidays) {
 		this.holidays = holidays;
 	}
 
@@ -82,7 +92,7 @@ public class HolidayMB extends BaseBeans {
 		return filterYear;
 	}
 
-	public void setFilterYear( Integer filterYear ) {
+	public void setFilterYear(Integer filterYear) {
 		this.filterYear = filterYear;
 	}
 

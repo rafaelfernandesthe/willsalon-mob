@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+		<f:view>
+			<f:event listener="#{holidayMB.onLoad}" type="preRenderView" />
+		</f:view>
+
+		<h:form id="holidayForm">
+		<p:commandButton widgetVar="addButton" value="#{labels.button_add}"
+					action="/admin/pages/holiday/addEdit.faces" ajax="false"
+					actionListener="#{holidayAddEditMB.add}" />
+		<p:commandButton widgetVar="renewHoliday" value="#{labels.button_renewHoliday}"
+					action="/admin/pages/holiday/renewHoliday.faces" ajax="false"
+					actionListener="#{holidayAddEditMB.renewHoliday}" />
+		
+		<p:panel id="holidayPanel" header="#{labels.holiday}">
+				<p:outputLabel styleClass="ui-grid-col-2" for="filterYear" value="#{labels.holiday_year}"/>
+				<p:selectOneMenu id="filterYear" value="#{holidayMB.filterYear}" >
+					<f:selectItems value="${holidayMB.yearsToFind}" />
+				</p:selectOneMenu>
+				<p:commandButton id="buttonFind" value="Consultar" actionListener="#{holidayMB.filterHoliday}" process="@form" update="holidayPanel"/>
+				<p:dataTable id="holidayDataTable" widgetVar="dataTable" var="holiday" 
+					value="#{holidayMB.holidays}" rowKey="#{holiday.id}" tableStyleClass="ui-table-columntoggle">
+					<p:column width="55">
+							<f:facet name="header">
+								<h:outputText value="Ação" />
+							</f:facet>
+							<div style="text-align: center;">
+								<p:commandButton icon="ui-icon-edit"
+									update="holidayDataTable" 
+									action="/admin/pages/holiday/addEdit.faces"
+									actionListener="#{holidayAddEditMB.update(holiday.id)}" />
+								<p:commandButton icon="ui-icon-delete" 
+								actionListener="#{holidayMB.setIdToDelete(holiday.id)}" onclick="PF('dialog_delete').show()"/>
+							</div>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.holiday_name}" />
+						</f:facet>
+						<h:outputText value="#{holiday.name}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.holiday_date}" />
+						</f:facet>
+						<h:outputText value="#{holiday.dateFormat}" />
+					</p:column>
+					
+				</p:dataTable>
+		</p:panel>
+		</h:form>
+				<p:dialog id="dialog_delete" widgetVar="dialog_delete" closable="false" resizable="false" appendTo="@(body)" 
+					position="center" modal="true" width="200" height="70" header="Confirmar?">
+						<p><h:outputText value="Deseja Excluir?" /></p>
+						<div style="text-align: center;">
+							<p:commandButton value="Sim" onclick="PF('dialog_delete').hide()" 
+							actionListener="#{holidayMB.delete}" process="@this" update="holidayForm"/>
+							<p:commandButton value="Não" type="button" onclick="PF('dialog_delete').hide()" />
+						</div>
+				</p:dialog>
+	</ui:define>
+</ui:composition>

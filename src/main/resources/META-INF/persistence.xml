@@ -9,6 +9,7 @@
 		<class>br.com.doutorti.willsalon.model.EmployeeEntity</class>
 		<class>br.com.doutorti.willsalon.model.ProcedureEntity</class>
 		<class>br.com.doutorti.willsalon.model.SchedulingEntity</class>
+		<class>br.com.doutorti.willsalon.model.HolidayEntity</class>
 		<properties>
 			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" /> -->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />

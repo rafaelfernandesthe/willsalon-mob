@@ -32,6 +32,9 @@
 				    	        	
 	    	        	<p:menuitem value="#{labels.menu_upload_img}" url="/admin/pages/uploadImg/list.faces"
 				    	        	ajax="false" icon="ui-icon-grid" rendered="#{menuMB.isAdmin()}" />
+				    	        	
+						<p:menuitem value="#{labels.menu_holiday}" url="/admin/pages/holiday/list.faces"
+				    	        	ajax="false" icon="ui-icon-info" rendered="#{menuMB.isAdmin()}" />
 				    	        			
 						<p:menuitem value="#{labels.logout}" url="/j_spring_security_logout"
 					             	ajax="false" icon="ui-icon-power"/>
