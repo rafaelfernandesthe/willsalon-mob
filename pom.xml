@@ -290,7 +290,7 @@
 			 <properties>
 			 	<dbUrl>jdbc:mysql://localhost:3306/mobile</dbUrl>
 			 	<dbUserName>root</dbUserName>
-			 	<dbPassword>root</dbPassword>
+			 	<dbPassword></dbPassword>
 			 </properties>
 		</profile>
 		<profile>

@@ -27,11 +27,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.doutorti.willsalon.model.ClientEntity;
 import br.com.doutorti.willsalon.model.EmployeeEntity;
+import br.com.doutorti.willsalon.model.HolidayEntity;
 import br.com.doutorti.willsalon.model.ProcedureEntity;
 import br.com.doutorti.willsalon.model.SchedulingEntity;
 import br.com.doutorti.willsalon.model.enuns.RepeatRule;
 import br.com.doutorti.willsalon.model.repositories.IClientRepository;
 import br.com.doutorti.willsalon.model.repositories.IEmployeeRepository;
+import br.com.doutorti.willsalon.model.repositories.IHolidayRepository;
 import br.com.doutorti.willsalon.model.repositories.IProcedureRepository;
 import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
@@ -58,6 +60,9 @@ public class SchedulingAddEditMB extends BaseBeans {
 
 	@Inject
 	private IProcedureRepository procedureRepository;
+	
+	@Inject
+	private IHolidayRepository holidayRepository;
 
 	@Inject
 	private FacesContext context;
@@ -186,6 +191,22 @@ public class SchedulingAddEditMB extends BaseBeans {
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
 		Calendar cTmp2 = Calendar.getInstance();
+		
+		//feriados
+		List<HolidayEntity> holidays = holidayRepository.findByYear( c.get(Calendar.YEAR ) );
+		for(HolidayEntity holiday : holidays){
+			cTmp.setTime( holiday.getInitialDate() );
+			cTmp2.setTime( holiday.getFinalDate() );
+			
+			for ( ; cTmp.compareTo( cTmp2 ) < 0; ) {
+				cTmp.add( Calendar.MINUTE, 1 );
+				if ( cTmp.compareTo( cTmp2 ) == 0 )
+					break;
+				closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+			}
+		}
+		//fim feriados
+		
 		dateHourClosedList = new ArrayList<String>();
 		if ( schedulingResult != null && !schedulingResult.isEmpty() ) {
 			for ( SchedulingEntity e : schedulingResult ) {
