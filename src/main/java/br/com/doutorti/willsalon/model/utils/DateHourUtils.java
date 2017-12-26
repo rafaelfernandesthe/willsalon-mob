@@ -55,4 +55,24 @@ public class DateHourUtils {
 				+ getCorrectHourOrMinute(c.get(Calendar.MINUTE));
 	}
 
+	public static Date getStartOfDay(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
+
+	public static Date getEndOfDay(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
+
 }

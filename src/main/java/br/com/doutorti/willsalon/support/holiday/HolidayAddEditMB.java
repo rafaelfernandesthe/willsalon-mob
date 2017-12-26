@@ -15,16 +15,17 @@ import org.springframework.web.context.WebApplicationContext;
 import br.com.doutorti.willsalon.model.HolidayEntity;
 import br.com.doutorti.willsalon.model.repositories.IHolidayRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
+import br.com.doutorti.willsalon.model.utils.DateHourUtils;
 
 //ConfigurableBeanFactory.SCOPE_SINGLETON, ConfigurableBeanFactory.SCOPE_PROTOTYPE,
 //WebApplicationContext.SCOPE_REQUEST, WebApplicationContext.SCOPE_SESSION
-@Scope( value = WebApplicationContext.SCOPE_REQUEST )
-@Named( value = "holidayAddEditMB" )
+@Scope(value = WebApplicationContext.SCOPE_REQUEST)
+@Named(value = "holidayAddEditMB")
 public class HolidayAddEditMB extends BaseBeans {
 
 	private static final long serialVersionUID = -7885745816896496959L;
 
-	Logger logger = Logger.getLogger( HolidayAddEditMB.class );
+	Logger logger = Logger.getLogger(HolidayAddEditMB.class);
 
 	@Inject
 	private IHolidayRepository holidayRepository;
@@ -41,46 +42,61 @@ public class HolidayAddEditMB extends BaseBeans {
 	}
 
 	public void add() {
-		this.title = this.getResourceProperty( "labels", "button_add" );
+		this.title = this.getResourceProperty("labels", "button_add");
 	}
 
-	public void update( Long id ) {
-		this.holiday = holidayRepository.findOne( id );
-		this.title = this.getResourceProperty( "labels", "button_update" );
+	public void update(Long id) {
+		this.holiday = holidayRepository.findOne(id);
+		this.title = this.getResourceProperty("labels", "button_update");
+	}
+	
+	public void renewHoliday() {
+		this.title = this.getResourceProperty("labels", "button_renewHoliday");
 	}
 
 	public void save() {
-		if ( this.holiday != null ) {
-			if ( this.holiday.getId() == null ) {
-				this.holidayRepository.save( this.holiday );
+		if (this.holiday != null) {
+			holiday.setInitialDate(DateHourUtils.getStartOfDay(holiday.getInitialDate()));
+			holiday.setFinalDate(DateHourUtils.getEndOfDay(holiday.getInitialDate()));
+			
+			if (this.holiday.getId() == null) {
+				this.holidayRepository.save(this.holiday);
 				try {
-					FacesContext.getCurrentInstance().getExternalContext().redirect( "list.faces" );
-				} catch ( IOException e ) {
+					FacesContext.getCurrentInstance().getExternalContext().redirect("list.faces");
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
 				// Update
-				this.holidayRepository.save( this.holiday );
+				this.holidayRepository.save(this.holiday);
 			}
 		}
 	}
 
 	public String getTitle() {
-		if ( holiday.getId() == null ) {
-			this.title = this.getResourceProperty( "labels", "button_add" );
+		if (holiday.getId() == null) {
+			this.title = this.getResourceProperty("labels", "button_add");
 		}
 		return this.title;
 	}
 
-	public void setTitle( String title ) {
+	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	private String getResourceProperty( String resource, String label ) {
+	private String getResourceProperty(String resource, String label) {
 		Application application = this.context.getApplication();
-		ResourceBundle bundle = application.getResourceBundle( this.context, resource );
+		ResourceBundle bundle = application.getResourceBundle(this.context, resource);
 
-		return bundle.getString( label );
+		return bundle.getString(label);
+	}
+
+	public HolidayEntity getHoliday() {
+		return holiday;
+	}
+
+	public void setHoliday(HolidayEntity holiday) {
+		this.holiday = holiday;
 	}
 
 }
