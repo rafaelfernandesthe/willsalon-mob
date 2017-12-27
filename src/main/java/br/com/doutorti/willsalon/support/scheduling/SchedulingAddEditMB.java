@@ -60,7 +60,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 
 	@Inject
 	private IProcedureRepository procedureRepository;
-	
+
 	@Inject
 	private IHolidayRepository holidayRepository;
 
@@ -103,6 +103,8 @@ public class SchedulingAddEditMB extends BaseBeans {
 	private int monthBirthDateClient;
 	private int yearBirthDateClient;
 
+	private String holidayMessage;
+
 	public SchedulingAddEditMB() {
 		logger.info( "ping" );
 		this.scheduling = new SchedulingEntity();
@@ -123,6 +125,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 		isShow = false;
 		dateHourClosedList = new ArrayList<String>();
 		showButtonNewClient = false;
+		holidayMessage = "";
 	}
 
 	@PostConstruct
@@ -191,22 +194,50 @@ public class SchedulingAddEditMB extends BaseBeans {
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
 		Calendar cTmp2 = Calendar.getInstance();
-		
-		//feriados
-		List<HolidayEntity> holidays = holidayRepository.findByYear( c.get(Calendar.YEAR ) );
-		for(HolidayEntity holiday : holidays){
-			cTmp.setTime( holiday.getInitialDate() );
-			cTmp2.setTime( holiday.getFinalDate() );
-			
-			for ( ; cTmp.compareTo( cTmp2 ) < 0; ) {
-				cTmp.add( Calendar.MINUTE, 1 );
-				if ( cTmp.compareTo( cTmp2 ) == 0 )
-					break;
-				closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+
+		// feriados do mes
+		// List<HolidayEntity> holidays = holidayRepository.findByYearAndMonth(
+		// c.get( Calendar.YEAR ), c.get( Calendar.MONTH ) );
+		// for ( HolidayEntity holiday : holidays ) {
+		// cTmp.setTime( holiday.getInitialDate() );
+		// cTmp2.setTime( holiday.getFinalDate() );
+		//
+		// for ( ; cTmp.compareTo( cTmp2 ) < 0; ) {
+		// cTmp.add( Calendar.MINUTE, 1 );
+		// if ( cTmp.compareTo( cTmp2 ) == 0 )
+		// break;
+		// closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get(
+		// Calendar.HOUR_OF_DAY ) ) + ":" +
+		// DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) )
+		// );
+		// }
+		// }
+		// fim feriados do mes
+
+		// feriados do dia
+		holidayMessage = "";
+		List<HolidayEntity> holidaysToday = holidayRepository.findByYearAndMonthAndDay( c.get( Calendar.YEAR ), c.get( Calendar.MONTH ) + 1, c.get( Calendar.DAY_OF_MONTH ) );
+		if ( holidaysToday != null && !holidaysToday.isEmpty() ) {
+			for ( HolidayEntity holiday : holidaysToday ) {
+				if ( !holidayMessage.isEmpty() )
+					holidayMessage += ", ";
+
+				holidayMessage += holiday.getName();
+
+				cTmp.setTime( holiday.getInitialDate() );
+				cTmp2.setTime( holiday.getFinalDate() );
+
+				for ( ; cTmp.compareTo( cTmp2 ) < 0; ) {
+					cTmp.add( Calendar.MINUTE, 1 );
+					if ( cTmp.compareTo( cTmp2 ) == 0 )
+						break;
+					closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+				}
 			}
+			holidayMessage = "Feriado(s): " + holidayMessage;
 		}
-		//fim feriados
-		
+		// fim feriados do dia
+
 		dateHourClosedList = new ArrayList<String>();
 		if ( schedulingResult != null && !schedulingResult.isEmpty() ) {
 			for ( SchedulingEntity e : schedulingResult ) {
@@ -249,6 +280,12 @@ public class SchedulingAddEditMB extends BaseBeans {
 			return;
 
 		RequestContext.getCurrentInstance().execute( String.format( "PF('accordion_1').select(%s)", accordionToOpen ) );
+
+		if ( accordionToOpen.equals( "2" ) )
+			RequestContext.getCurrentInstance().execute( "window.location = '#formScheduling:accordion_1:tabDate'" );
+
+		// RequestContext.getCurrentInstance().execute( String.format(
+		// "colorfullDay('%s')", c.get( Calendar.DAY_OF_MONTH ) ) );
 	}
 
 	public List<ClientEntity> autocompleteClient( String query ) {
@@ -336,12 +373,13 @@ public class SchedulingAddEditMB extends BaseBeans {
 						c.setTime( newScheduling.getInitialDate() );
 						c.add( Calendar.DAY_OF_MONTH, repeatRule.days * i );
 						// old -> agendar repetições apenas para o ano corrente
-						// new -> agendar repetições para prox ano a partir de outubro
+						// new -> agendar repetições para prox ano a partir de
+						// outubro
 						if ( c.get( Calendar.YEAR ) > Calendar.getInstance().get( Calendar.YEAR ) ) {
-							if(Calendar.getInstance().get(Calendar.MONTH) < 9 ){
+							if ( Calendar.getInstance().get( Calendar.MONTH ) < 9 ) {
 								break;
 							}
-							if (( c.get( Calendar.YEAR ) - Calendar.getInstance().get( Calendar.YEAR )) > 1){
+							if ( ( c.get( Calendar.YEAR ) - Calendar.getInstance().get( Calendar.YEAR ) ) > 1 ) {
 								break;
 							}
 						}
@@ -605,5 +643,13 @@ public class SchedulingAddEditMB extends BaseBeans {
 		for ( int i = currentYear - 80; i <= currentYear; i++ )
 			result.add( i );
 		return result;
+	}
+
+	public String getHolidayMessage() {
+		return holidayMessage;
+	}
+
+	public void setHolidayMessage( String holidayMessage ) {
+		this.holidayMessage = holidayMessage;
 	}
 }

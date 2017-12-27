@@ -16,9 +16,6 @@
 		<p:commandButton widgetVar="addButton" value="#{labels.button_add}"
 					action="/admin/pages/holiday/addEdit.faces" ajax="false"
 					actionListener="#{holidayAddEditMB.add}" />
-		<p:commandButton widgetVar="renewHoliday" value="#{labels.button_renewHoliday}"
-					action="/admin/pages/holiday/renewHoliday.faces" ajax="false"
-					actionListener="#{holidayAddEditMB.renewHoliday}" />
 		
 		<p:panel id="holidayPanel" header="#{labels.holiday}">
 				<p:outputLabel styleClass="ui-grid-col-2" for="filterYear" value="#{labels.holiday_year}"/>

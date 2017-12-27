@@ -58,12 +58,13 @@
 							<div class="ui-grid-row">
 								<p:outputLabel for="date" value="#{labels.scheduling_date}"/>
 								<p:calendar id="date" value="#{schedulingAddEditMB.scheduling.initialDate}" mode="inline" locale="pt_BR" required="true" 
-								pattern="dd/MM/yyyy" >
-									<p:ajax event="dateSelect" listener="#{schedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour previsionDate"/>
+								pattern="dd/MM/yyyy">
+									<p:ajax event="dateSelect" listener="#{schedulingAddEditMB.loadDateHourList('null')}" process="@this employee checkProcedures" update="dateHour previsionDate holidayMessage"/>
 								</p:calendar>
 							</div>
 							
 							<div class="ui-grid-row">
+								<p:outputLabel id="holidayMessage" value="#{schedulingAddEditMB.holidayMessage}" style="color:red;" />
 								<p:outputLabel styleClass="ui-grid-col-2" for="dateHour" value="#{labels.scheduling_dateHour}"/>
 								<p:selectOneRadio id="dateHour" value="#{schedulingAddEditMB.dateHour}" required="true">
 									<p:ajax event="change" listener="#{schedulingAddEditMB.prepareFinalDateProvision}" process="@this checkProcedures dateHour" update="previsionDate formScheduling:operationButton" />
@@ -154,5 +155,17 @@
 			</p:dialog>
 		
 		</h:form>
+		
+		<script >
+			function colorfullDay(day){
+				alert(day);
+			}
+
+			jQuery(document).ready(function(){
+				//$('.ui-datepicker-next')[0].onclick = function(){
+					
+				//}
+			});
+		</script>
 	</ui:define>
 </ui:composition>
