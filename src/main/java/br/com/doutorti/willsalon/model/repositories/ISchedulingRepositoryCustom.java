@@ -6,9 +6,8 @@ import br.com.doutorti.willsalon.model.SchedulingEntity;
 
 public interface ISchedulingRepositoryCustom {
 
-	public List<SchedulingEntity> findCustom(
-			SchedulingEntity schedulingFindEntity);
+	public List<SchedulingEntity> findCustom( SchedulingEntity schedulingFindEntity, boolean isHistory );
 
-	public boolean existEqualsDate(SchedulingEntity scheduling);
+	public boolean existEqualsDate( SchedulingEntity scheduling );
 
 }

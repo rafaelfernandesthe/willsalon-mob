@@ -82,7 +82,7 @@ public class SchedulingMB extends BaseBeans {
 		schedulingFindEntity.setEmployee( employeeFilter );
 		schedulingFindEntity.setInitialDate( dateFilter );
 
-		schedulings = schedulingRepository.findCustom( schedulingFindEntity );
+		schedulings = schedulingRepository.findCustom( schedulingFindEntity, false );
 		if ( dateFilter != null ) {
 			ArrayList<String> dateHourClosedList = new ArrayList<String>();
 			List<String> closedList = new ArrayList<String>();
