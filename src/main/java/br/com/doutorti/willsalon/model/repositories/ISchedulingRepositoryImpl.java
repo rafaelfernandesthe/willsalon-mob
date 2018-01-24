@@ -17,9 +17,14 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 
 	public List<SchedulingEntity> findCustom(SchedulingEntity schedulingFindEntity) {
 		Query q = null;
-		String queryString = "SELECT s FROM SchedulingEntity s WHERE 1=1 AND s.employee.id = :employeeId ";
+		String queryString = "SELECT s FROM SchedulingEntity s WHERE 1=1 ";
+		String employeeStatement = null;
 		String clientStatement = null;
 		String dateStatement = null;
+		if (schedulingFindEntity.getEmployee() != null) {
+			employeeStatement = "AND s.employee.id = :employeeId ";
+			queryString += employeeStatement;
+		}
 		if (schedulingFindEntity.getClient() != null) {
 			clientStatement = "AND s.client.id = :clientId ";
 			queryString += clientStatement;
@@ -39,8 +44,10 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 		queryString += "ORDER BY s.initialDate ASC";
 		q = em.createQuery(queryString);
 
-		q.setParameter("employeeId",
-				schedulingFindEntity.getEmployee() != null ? schedulingFindEntity.getEmployee().getId() : null);
+		if (employeeStatement != null) {
+			q.setParameter("employeeId",
+					schedulingFindEntity.getEmployee() != null ? schedulingFindEntity.getEmployee().getId() : null);
+		}
 
 		if (clientStatement != null) {
 			q.setParameter("clientId",
@@ -73,7 +80,7 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 		String queryString = "SELECT count(*) FROM SchedulingEntity s WHERE 1=1 " + "AND YEAR(s.initialDate) = :year "
 				+ "AND MONTH(s.initialDate) = :month " + "AND DAY(s.initialDate) = :day "
 				+ "AND HOUR(s.initialDate) = :hour " + "AND MINUTE(s.initialDate) = :minute "
-						+ "AND s.employee.id = :employeeId";
+				+ "AND s.employee.id = :employeeId";
 		Query q = em.createQuery(queryString);
 		Calendar c = Calendar.getInstance();
 		c.setTime(scheduling.getInitialDate());

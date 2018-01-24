@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="clientHistoryForm">
+		
+		<p:panel id="clientHistoryPanel" header="#{labels.client_history}">
+
+				<div class="ui-grid-row">
+					<p:outputLabel styleClass="ui-grid-col-2" for="client" value="#{labels.client}"/>
+					<p:autoComplete styleClass="ui-grid-col-8" id="client" value="#{clientHistoryMB.clientFilter}" completeMethod="#{clientHistoryMB.autocompleteClient}" minQueryLength="3" 
+					converter="autocompleteConverter" var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true" required="true"/>
+				</div>
+				
+				<p:commandButton value="Filtrar" process="@form" actionListener="#{clientHistoryMB.find}" update="clientHistoryDataTable" ajax="true"/>
+
+				<p:dataTable id="clientHistoryDataTable" widgetVar="dataTable" selectionMode="single" emptyMessage="Nenhum histórico encontrado"
+					var="clientHistory" loadingMessage="carregando..." selection="#{clientHistoryMB.itemRowSelected}"
+					value="#{clientHistoryMB.clientHistories}" paginator="false" rowKey="#{clientHistory.id}" tableStyleClass="ui-table-columntoggle">
+
+					<p:ajax event="rowSelect" listener="#{clientHistoryMB.showQuestionDialog}" />
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.scheduling_dateHour}" />
+						</f:facet>
+						<h:outputText
+							value="#{clientHistory.initialDateFormatWithDayAndHours}" />
+					</p:column>
+					
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client_history}" />
+						</f:facet>
+						<h:outputText value="#{clientHistory.history}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panel>
+		</h:form>
+		
+		<p:dialog id="dialog_show" widgetVar="dialog_show" header="Visualizar">
+			<p:outputPanel>
+					<p:outputLabel value="#{labels.employee}"/>
+					<p:inputText value="#{clientHistoryMB.clientHistoryShow.employee.name}"  disabled="true"/>
+					
+					<p:outputLabel value="#{labels.client}"/>
+					<p:inputText value="#{clientHistoryMB.clientHistoryShow.client.name}" disabled="true"/>
+					<p:inputText value="#{clientHistoryMB.clientHistoryShow.client.phone}" disabled="true"/>
+					
+					<p:outputLabel value="#{labels.clientHistory_date}"/>
+					<p:inputText value="#{clientHistoryMB.clientHistoryShow.initialDateFormatWithDayAndHours}" disabled="true"/>
+					
+					<p:outputLabel value="#{labels.clientHistory_finalDatePrevision}"/>
+					<p:inputText value="#{clientHistoryMB.clientHistoryShow.finalDatePrevisionFormatWithoutDay}" disabled="true"/>
+					
+					<p:outputLabel value="#{labels.procedure}"/>
+					<p:inputTextarea value="#{clientHistoryMB.clientHistoryShow.procedureList}" disabled="true" />
+					<p:inputTextarea value="#{clientHistoryMB.clientHistoryShow.history}" disabled="true" />
+			</p:outputPanel>
+			<p:commandButton value="Fechar" type="button" 
+				onclick="PF('dialog_show').hide()" ajax="false" />
+		</p:dialog>
+		
+		<p:dialog id="dialog_question" widgetVar="dialog_question" header="Ação">
+			<p>
+				<h:outputText value="O que deseja Fazer?" />
+				<h:form>
+					<p:commandButton icon="ui-icon-eye" value="Visualizar" onclick="PF('dialog_question').hide()" ajax="true" 
+					actionListener="#{clientHistoryMB.show(clientHistoryMB.clientHistoryShow.id)}" process="@this" />
+				</h:form>
+			</p>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>
