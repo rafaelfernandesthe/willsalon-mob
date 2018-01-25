@@ -357,22 +357,23 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 				this.schedulingRepository.save( scheduling );
 
-				try {
-					SimpleEmail mail = new SimpleEmail();
-					mail.setFrom( "informativo@willsalon.com", "Willsalon.com" );
-					mail.setCharset( "utf8" );
-					mail.setSubject( "Novo Agendamento de Cliente" );
-					mail.setMsg( "O Cliente realizou um novo agendamento: " + scheduling.toString() );
-					mail.setSSLOnConnect( true );
-					mail.setAuthentication( "informativo@willsalon.com", "atendimentoWillSalon1" );
-					mail.setHostName( "smtp.willsalon.com" );
-					mail.setSmtpPort( 587 );
-					mail.addTo( "willsalon@willsalon.com", "Willsalon.com" );
-					mail.send();
-
-				} catch ( EmailException e ) {
-					e.printStackTrace();
-				}
+				//TODO adapatar para cada salão
+//				try {
+//					SimpleEmail mail = new SimpleEmail();
+//					mail.setFrom( "informativo@willsalon.com", "Willsalon.com" );
+//					mail.setCharset( "utf8" );
+//					mail.setSubject( "Novo Agendamento de Cliente" );
+//					mail.setMsg( "O Cliente realizou um novo agendamento: " + scheduling.toString() );
+//					mail.setSSLOnConnect( true );
+//					mail.setAuthentication( "informativo@willsalon.com", "atendimentoWillSalon1" );
+//					mail.setHostName( "smtp.willsalon.com" );
+//					mail.setSmtpPort( 587 );
+//					mail.addTo( "willsalon@willsalon.com", "Willsalon.com" );
+//					mail.send();
+//
+//				} catch ( EmailException e ) {
+//					e.printStackTrace();
+//				}
 
 				RequestContext.getCurrentInstance().execute( "PF('dialog_saved').show()" );
 			}
