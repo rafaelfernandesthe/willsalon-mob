@@ -25,10 +25,12 @@ import org.springframework.context.annotation.Scope;
 
 import br.com.doutorti.willsalon.model.ClientEntity;
 import br.com.doutorti.willsalon.model.EmployeeEntity;
+import br.com.doutorti.willsalon.model.HolidayEntity;
 import br.com.doutorti.willsalon.model.ProcedureEntity;
 import br.com.doutorti.willsalon.model.SchedulingEntity;
 import br.com.doutorti.willsalon.model.repositories.IClientRepository;
 import br.com.doutorti.willsalon.model.repositories.IEmployeeRepository;
+import br.com.doutorti.willsalon.model.repositories.IHolidayRepository;
 import br.com.doutorti.willsalon.model.repositories.IProcedureRepository;
 import br.com.doutorti.willsalon.model.repositories.ISchedulingRepository;
 import br.com.doutorti.willsalon.model.utils.BaseBeans;
@@ -55,6 +57,9 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	@Inject
 	private IProcedureRepository procedureRepository;
+
+	@Inject
+	private IHolidayRepository holidayRepository;
 
 	@Inject
 	private FacesContext context;
@@ -89,6 +94,8 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	private String messageNoHasTime;
 
+	private String holidayMessage;
+
 	public ClientSchedulingAddEditMB() {
 		logger.info( "ping" );
 		this.scheduling = new SchedulingEntity();
@@ -107,6 +114,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		}
 		isShow = false;
 		dateHourClosedList = new ArrayList<String>();
+		setHolidayMessage( "" );
 	}
 
 	@PostConstruct
@@ -197,8 +205,32 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 		ArrayList<String> closedList = new ArrayList<String>();
 		Calendar cTmp = Calendar.getInstance();
 		Calendar cTmp2 = Calendar.getInstance();
-		dateHourClosedList = new ArrayList<String>();
 
+		// feriados do dia
+		setHolidayMessage( "" );
+		List<HolidayEntity> holidaysToday = holidayRepository.findByYearAndMonthAndDay( c.get( Calendar.YEAR ), c.get( Calendar.MONTH ) + 1, c.get( Calendar.DAY_OF_MONTH ) );
+		if ( holidaysToday != null && !holidaysToday.isEmpty() ) {
+			for ( HolidayEntity holiday : holidaysToday ) {
+				if ( !getHolidayMessage().isEmpty() )
+					setHolidayMessage( getHolidayMessage() + ", " );
+
+				setHolidayMessage( getHolidayMessage() + holiday.getName() );
+
+				cTmp.setTime( holiday.getInitialDate() );
+				cTmp2.setTime( holiday.getFinalDate() );
+
+				for ( ; cTmp.compareTo( cTmp2 ) < 0; ) {
+					cTmp.add( Calendar.MINUTE, 1 );
+					if ( cTmp.compareTo( cTmp2 ) == 0 )
+						break;
+					closedList.add( DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.HOUR_OF_DAY ) ) + ":" + DateHourUtils.getCorrectHourOrMinute( cTmp.get( Calendar.MINUTE ) ) );
+				}
+			}
+			setHolidayMessage( "Feriado(s): " + getHolidayMessage() );
+		}
+		// fim feriados do dia
+
+		dateHourClosedList = new ArrayList<String>();
 		if ( schedulingResult != null && !schedulingResult.isEmpty() ) {
 			for ( SchedulingEntity e : schedulingResult ) {
 				cTmp.setTime( e.getInitialDate() );
@@ -496,6 +528,14 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 
 	public void setMessageNoHasTime( String messageNoHasTime ) {
 		this.messageNoHasTime = messageNoHasTime;
+	}
+
+	public String getHolidayMessage() {
+		return holidayMessage;
+	}
+
+	public void setHolidayMessage( String holidayMessage ) {
+		this.holidayMessage = holidayMessage;
 	}
 
 }
