@@ -187,9 +187,9 @@ p {
 }
 
 .header {
-	background: url(../images/home.jpg);
-	background-size: cover;
-	background-repeat: no-repeat;
+/* 	background: url(../images/home.jpg); */
+/* 	background-size: cover; */
+/* 	background-repeat: no-repeat; */
 }
 
 .header .section_overlay {
@@ -515,10 +515,10 @@ p {
 }
 
 #owl-demo .owl-item div{
-  padding:5px;
+  padding:0px;
 }
 .testimonial {
-	background: url(../images/testimonial.jpg);
+	background: url(../images/bg-image-1.jpg);
 	background-size: cover;
 	background-repeat: no-repeat;
 }
