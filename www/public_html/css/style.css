@@ -169,6 +169,14 @@ p {
 
 	.navbar-collapse {
 		border-bottom: 2px solid #f10b0b00;
+	}	
+
+	.logoImage {
+		  background: url(../images/logo_small_branco.png) no-repeat !important;
+	}
+
+	.google-maps {
+		padding-bottom: 50% !important;
 	}
 }
 
@@ -190,6 +198,18 @@ p {
 
 .logo {
 	padding-bottom: 50px;
+}
+
+#logoImage {
+	background: url(../images/logo_small_branco.png) no-repeat;
+}
+
+.logoImage {
+  display: block;
+  background: url(../images/logo_small_preto.png) no-repeat;
+  width: 100px; /* Width of new image */
+  height: auto; /* Height of new image */
+  padding-left: 100px; /* Equal to width of new image */
 }
 
 .inner_home {
@@ -229,7 +249,7 @@ p {
 
 @media ( max-width : 768px) {
 	.hidden-mobile {
-		display: none;
+		display: none;log
 	}
 }
 
@@ -488,18 +508,15 @@ p {
 /*---------------------------------------
    SECTION TESTIMONIAL              
 -----------------------------------------*/
-#owl-demo .item {
-	margin-left: 1px;
-	margin-right: 1px;
-	margin-bottom: 50px;
+#owl-demo .item img{
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
-#owl-demo .item img {
-	display: block;
-	width: 100%;
-	height: auto;
+#owl-demo .owl-item div{
+  padding:5px;
 }
-
 .testimonial {
 	background: url(../images/testimonial.jpg);
 	background-size: cover;
@@ -1333,15 +1350,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill
 .google-maps {
 	position: relative;
 	padding-bottom: 30%;
-	//
-	This
-	is
-	the
-	aspect
-	ratio
-	height
-	:
-	0;
+	height:	0;
 }
 
 .google-maps iframe {

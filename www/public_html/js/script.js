@@ -190,14 +190,24 @@ $(document).ready(function() {
 $(document).ready(function() {
 
     "use strict";
-    
+
+
     $("#owl-demo").owlCarousel({
-        autoPlay: 3000,
-        items: 4, //10 items above 1000px browser width
-        itemsDesktop: [1370, 3], //5 items between 1000px and 901px
-        itemsDesktopSmall: [900, 2], // betweem 900px and 601px
-        itemsTablet: [600, 1], //2 items between 600 and 0
-    });
+      autoPlay: 3000,
+      navigation : false, // Show next and prev buttons
+      slideSpeed : 400,
+      paginationSpeed : 1000,
+      singleItem:true
+ 
+      // "singleItem:true" is a shortcut for:
+      // items : 1, 
+      // itemsDesktop : false,
+      // itemsDesktopSmall : false,
+      // itemsTablet: false,
+      // itemsMobile : false
+ 
+  });
+
 });
 
 
