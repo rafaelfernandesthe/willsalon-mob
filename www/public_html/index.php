@@ -20,6 +20,8 @@
     <!-- Font Awesome -->
     <link href="css/font-awesome.min.css" rel="stylesheet">
 
+	<!-- Instagram -->
+    <link rel="stylesheet" href="css/instagram.css"/>
 
     <!-- PrettyPhoto -->
     <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -65,6 +67,19 @@ fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=245786829216560&ev=PageView&noscript=1"/></noscript>
 -->
+
+	<script src="js/instafeed.min.js"></script>
+	<script type="text/javascript">
+		var userFeed = new Instafeed ({
+		  get: 'user',
+		  userId: '247005067',
+		  accessToken: '247005067.1677ed0.dbd60e32c59f43798b45f7cb07cd3675',
+			template: '<div class="instafeed-size"><a href="{{link}}" target="_blank"><img src="{{image}}" /></a></div>' ,
+			resolution: 'low_resolution' ,
+			limit: '5'
+		});
+		userFeed.run();
+	</script>
 
 </head>
 
@@ -543,6 +558,29 @@ Valorização humana</br>
         </div>
 </section>
 <!-- END WORKSHOP -->
+
+<!-- =========================
+     START INSTAGRAM
+============================== -->    
+
+<section class="instagram-area section-padding page">
+	<div class="instagram-area-bg"></div>
+	<div class="container wow fadeIn">
+		<div class="row">
+			<div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+				<div class="area-title-insta text-center">
+					<h4><i class="fa fa-instagram"></i> siga-nos • <a href="http://instagram.com/_u/salaomaisbonita/"" target="_blank">@salaomaisbonita</a></h4>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+				<div id="instafeed" class="text-center"></div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- END INSTAGRAM -->
 
 
 <!-- =========================
