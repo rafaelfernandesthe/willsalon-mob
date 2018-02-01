@@ -80,6 +80,57 @@ p {
 	background-repeat: no-repeat;
 	background-size: cover;
 }
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff;
+    text-transform: uppercase;
+    width: 80%;
+}
+
+.image-title{
+	font-family: lulo-clean-w01-one-bold,sans-serif;
+	font-size: 90px;
+	word-wrap: break-word;
+	letter-spacing: 0.2em;
+	font-weight: bold;
+}
+
+.image-subtitle{
+	font-family: avenir-lt-w01_35-light1475496,sans-serif;
+	font-size: 25px;
+	letter-spacing: 0.3em;
+}
+
+/* Extra small devices (phones, up to 480px) */
+@media screen and (max-width: 767px) {
+	.image-title{
+		font-size: 30px;
+	}
+
+	.image-subtitle{
+		font-size: 15px;
+	}
+}
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991px) {
+	.image-title{
+		font-size: 70px;
+	}
+
+	.image-subtitle{
+		font-size: 20px;
+	}
+}
+/* tablets/desktops and up ----------- */
+@media (min-width: 992px) and (max-width: 1199px) {
+}
+
+
 /*---------------------------------------
    SECTION HOME              
 -----------------------------------------*/
@@ -114,6 +165,12 @@ p {
 }
 
 @media ( min-width :768px) {
+
+	.container {
+	}
+
+	.navbar-nav>li {
+	}
 		
 	.navbar-default {
 		background-color: transparent;
@@ -134,7 +191,7 @@ p {
 		-o-transition: all 1s;
 		transition: all 1s;
 		z-index: 110;
-		background-color: rgba(0, 0, 0, 0.7) !important;
+		background-color: rgba(0, 0, 0, 0.7);
 	}
 	.navbar-brand img {
 		padding-top: 25px;
@@ -151,7 +208,6 @@ p {
 		transition: all 1s;
 	}
 	.navbar-nav>li>a {
-		padding-top: 5px;
 	}
 }
 
@@ -512,11 +568,20 @@ p {
     display: block;
     width: 100%;
     height: auto;
+  	background-size:100% auto;
+}
+
+/* Extra small devices (phones, up to 480px) */
+@media screen and (max-width: 767px) {
+	#owl-demo .item img{
+	    height: 250px;
+	}
 }
 
 #owl-demo .owl-item div{
   padding:0px;
 }
+
 .testimonial {
 	background: url(../images/bg-image-1.jpg);
 	background-size: cover;
@@ -1285,7 +1350,6 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill
 .spinner > div {
     width: 18px;
     height: 18px;
-    background-color: #333;
     border-radius: 100%;
     display: inline-block;
     -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
@@ -1298,10 +1362,15 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill
 .spinner .bounce1 {
     -webkit-animation-delay: -0.32s;
     animation-delay: -0.32s;
+    background-color: rgba(255, 0, 0, 0.7);
 }
 .spinner .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
+    background-color: rgba(255, 0, 0, 0.8);
+}
+.spinner .bounce3 {
+    background-color: rgba(255, 0, 0, 1);
 }
 @-webkit-keyframes bouncedelay {
     0%, 80%, 100% {

@@ -53,17 +53,20 @@ a:focus {
 }
 
 #instafeed img {
-  padding: 0 10px;
+  padding: 5px 10px;
   opacity: 0.8;
   filter: alpha(opacity-80);
-}
-
-img {
-    max-width: 100%;
-    height: auto;
+  max-width: 100%;
+  height: auto;
 }
 
 #instafeed img:hover {
   opacity: 1;
   filter: alpha(opacity-100);
+}
+
+@media ( max-width : 768px) {
+  .instafeed-size {
+    width: 50% !important;
+  }
 }

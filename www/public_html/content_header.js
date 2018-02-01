@@ -6,24 +6,40 @@ document.write("\
 \
 			\
 					<div class='item'>\
-						<a href='images/header/header1.jpg' rel='prettyPhoto[pp_gal]'>\
-						<img src='images/header/header1.jpg'  alt='APPS SCREEN'/>\
-						</a>\
+						<img src='images/header/header01.jpg'  alt='APPS SCREEN'/>\
 					</div>\
 					<div class='item'>\
-						<a href='images/header/header2.jpg' rel='prettyPhoto[pp_gal]'>\
 						<img src='images/header/header2.jpg'  alt='APPS SCREEN'/>\
-						</a>\
+						<div class='centered'>\
+							<div>\
+							<span class='image-title'>Estética</span>\
+							</div>\
+							<div>\
+							<span class='image-subtitle'>Massagens | Drenagens</span>\
+							</div>\
+						</div>\
 					</div>\
 					<div class='item'>\
-						<a href='images/header/1170x400.png' rel='prettyPhoto[pp_gal]'>\
-						<img src='images/header/1170x400.png'  alt='APPS SCREEN'/>\
-						</a>\
+						<img src='images/header/header3.jpg'  alt='APPS SCREEN'/>\
+						<div class='centered'>\
+							<div>\
+							<span class='image-title'>Dia dos noivos</span>\
+							</div>\
+							<div>\
+							<span class='image-subtitle'>Pacotes especiais</span>\
+							</div>\
+						</div>\
 					</div>\
 					<div class='item'>\
-						<a href='images/header/1170x400.png' rel='prettyPhoto[pp_gal]'>\
-						<img src='images/header/1170x400.png'  alt='APPS SCREEN'/>\
-						</a>\
+						<img src='images/header/header4.jpg'  alt='APPS SCREEN'/>\
+						<div class='centered'>\
+							<div>\
+							<span class='image-title'>Pacote Formatura</span>\
+							</div>\
+							<div>\
+							<span class='image-subtitle'>Individual ou Turma</span>\
+							</div>\
+						</div>\
 					</div>\
 				\
 			</div>\
