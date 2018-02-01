@@ -247,9 +247,9 @@ $(document).ready(function() {
 
 //SCHEDULING
 $(document).ready(function() {
-	$("#phoneInput").mask("(00) 0000-00009");
+	$("#phoneInput").mask("(00) 00000-0000");
 	
-	$("#birthDateInput").mask("00/00/0000");
+	$("#birthDateInput").mask("00/00");
 	
 	$('input[type="date"]').attr('type','text');
 

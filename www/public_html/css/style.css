@@ -142,7 +142,7 @@ p {
 
 .navbar {
 	/* 	margin-top: 0px */
-	
+	font-size: 13px;
 }
 
 .navbar-brand {
@@ -391,6 +391,7 @@ p {
 .about {
 	/*     background: #F1F1F1; */
 	background-color: rgb(250, 250, 250);
+	padding-bottom: 40px;
 }
 
 .about h3 {
@@ -584,8 +585,8 @@ p {
 
 .testimonial {
 	background: url(../images/bg-image-1.jpg);
-	background-size: cover;
-	background-repeat: no-repeat;
+	background-size: cover; 
+	background-repeat: repeat;
 }
 
 .testimonial .section_overlay {
@@ -598,11 +599,11 @@ p {
 	bottom: -8px;
 }
 
-div.carousel-inner .item img {
+.testimonial img {
 	border: 2px solid red;
 	border-radius: 50%;
 	padding: 3px;
-	width: 224px;
+	width: 200px;
 }
 
 .testimonial_caption {
@@ -613,7 +614,6 @@ div.carousel-inner .item img {
 	color: #D8D8D8;
 	font-size: 18px;
 	line-height: 27px;
-	padding-top: 50px;
 }
 
 .testimonial_caption h2 {
