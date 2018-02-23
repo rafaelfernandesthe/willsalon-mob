@@ -1,19 +1,28 @@
 package br.com.doutorti.willsalon.model.repositories;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
+import br.com.doutorti.willsalon.model.ClientEntity;
 import br.com.doutorti.willsalon.model.SchedulingEntity;
+import br.com.doutorti.willsalon.model.enuns.AbsenceTime;
 
 public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 
 	@PersistenceContext
 	EntityManager em;
+
+	@Inject
+	IClientRepository clientRepository;
 
 	public List<SchedulingEntity> findCustom( SchedulingEntity schedulingFindEntity, boolean isHistory ) {
 		Query q = null;
@@ -64,6 +73,69 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 		}
 
 		return q.getResultList();
+	}
+
+	@Override
+	public List<SchedulingEntity> findByAbsense( AbsenceTime absenceTime ) {
+		String queryStringMax = "SELECT sMax.fk_id_client as c,max(sMax.initialDate) as initialDate FROM Scheduling sMax GROUP BY sMax.fk_id_client";
+		String queryString = String.format( "SELECT DISTINCT s.c FROM (%s) s WHERE 1=1 ", queryStringMax );
+		Query q = null;
+		Calendar date1 = null;
+		Calendar date2 = null;
+		switch ( absenceTime ) {
+			case _0:
+				queryString = "SELECT c.pk_id_person FROM Client c WHERE c.pk_id_person NOT IN (SELECT DISTINCT s.fk_id_client FROM Scheduling s)";
+				break;
+			case _15_30:
+				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
+				date1 = Calendar.getInstance();
+				date1.add( Calendar.DAY_OF_MONTH, -15 );
+				date2 = Calendar.getInstance();
+				date2.add( Calendar.DAY_OF_MONTH, -30 );
+				break;
+			case _30_60:
+				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
+				date1 = Calendar.getInstance();
+				date1.add( Calendar.DAY_OF_MONTH, -30 );
+				date2 = Calendar.getInstance();
+				date2.add( Calendar.DAY_OF_MONTH, -60 );
+				break;
+			case _60_90:
+				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
+				date1 = Calendar.getInstance();
+				date1.add( Calendar.DAY_OF_MONTH, -60 );
+				date2 = Calendar.getInstance();
+				date2.add( Calendar.DAY_OF_MONTH, -90 );
+				break;
+			case _90_N:
+				queryString += "AND s.initialDate <= :date1";
+				date1 = Calendar.getInstance();
+				date1.add( Calendar.DAY_OF_MONTH, -90 );
+				break;
+			default:
+				;
+		}
+
+		List<SchedulingEntity> result = new ArrayList<SchedulingEntity>();
+		if ( !AbsenceTime._0.equals( absenceTime ) ) {
+			queryString += " ORDER BY s.initialDate ASC";
+		}
+		q = em.createNativeQuery( queryString );
+		if ( date1 != null )
+			q.setParameter( "date1", date1.getTime(), TemporalType.DATE );
+		if ( date2 != null )
+			q.setParameter( "date2", date2.getTime(), TemporalType.DATE );
+
+		List<BigInteger> result1 = q.getResultList();
+		List<ClientEntity> clients = new ArrayList<ClientEntity>();
+		for ( BigInteger o : result1 ) {
+			clients.add( clientRepository.findOne( o.longValue() ) );
+		}
+
+		for ( ClientEntity c : clients ) {
+			result.add( new SchedulingEntity( c.getId(), c ) );
+		}
+		return result;
 	}
 
 	private Date getCorrectHourDay( Date date, boolean init ) {

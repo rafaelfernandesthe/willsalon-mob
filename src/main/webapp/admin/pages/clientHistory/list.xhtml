@@ -16,11 +16,19 @@
 				<div class="ui-grid-row">
 					<p:outputLabel styleClass="ui-grid-col-2" for="client" value="#{labels.client}"/>
 					<p:autoComplete styleClass="ui-grid-col-8" id="client" value="#{clientHistoryMB.clientFilter}" completeMethod="#{clientHistoryMB.autocompleteClient}" minQueryLength="3" 
-					converter="autocompleteConverter" var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true" required="true"/>
+					converter="autocompleteConverter" var="item" itemValue="#{item}" itemLabel="#{item}" dropdown="true" />
 				</div>
 				
-				<p:commandButton value="Filtrar" process="@form" actionListener="#{clientHistoryMB.find}" update="clientHistoryDataTable" ajax="true"/>
-
+				<div class="ui-grid-row">
+					<p:outputLabel styleClass="ui-grid-col-2" for="client_absence_timetime" value="#{labels.client_absence_time}"/>
+					<p:selectOneMenu id="client_absence_timetime" value="#{clientHistoryMB.absenceTime}">
+						<f:selectItem itemValue="" itemLabel="Selecione"/>
+						<f:selectItems value="#{clientHistoryMB.absenceTimeList}" var="item" itemValue="#{item}" itemLabel="#{item.description}" />
+					</p:selectOneMenu>
+				</div>
+				
+				<p:commandButton value="Filtrar" process="@form" actionListener="#{clientHistoryMB.find}" update="clientHistoryDataTable sumResults" ajax="true"/>
+				<p:outputLabel id="sumResults" value="#{clientHistoryMB.clientHistories.size()} Resultados"/>
 				<p:dataTable id="clientHistoryDataTable" widgetVar="dataTable" selectionMode="single" emptyMessage="Nenhum histórico encontrado"
 					var="clientHistory" loadingMessage="carregando..." selection="#{clientHistoryMB.itemRowSelected}"
 					value="#{clientHistoryMB.clientHistories}" paginator="false" rowKey="#{clientHistory.id}" tableStyleClass="ui-table-columntoggle">
@@ -35,7 +43,7 @@
 							value="#{clientHistory.initialDateFormatWithDayAndHours}" />
 					</p:column>
 					
-					<p:column>
+					<p:column rendered="#{clientHistory.viewHistory == false }">
 						<f:facet name="header">
 							<h:outputText value="#{labels.client_history}" />
 						</f:facet>
