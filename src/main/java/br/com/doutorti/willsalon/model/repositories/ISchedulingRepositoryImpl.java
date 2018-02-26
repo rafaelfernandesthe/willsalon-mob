@@ -87,28 +87,28 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 				queryString = "SELECT c.pk_id_person FROM client c WHERE c.pk_id_person NOT IN (SELECT DISTINCT s.fk_id_client FROM scheduling s)";
 				break;
 			case _15_30:
-				queryString += "AND initialDate <= :date1 AND initialDate > :date2";
+				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
 				date1 = Calendar.getInstance();
 				date1.add( Calendar.DAY_OF_MONTH, -15 );
 				date2 = Calendar.getInstance();
 				date2.add( Calendar.DAY_OF_MONTH, -30 );
 				break;
 			case _30_60:
-				queryString += "AND initialDate <= :date1 AND initialDate > :date2";
+				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
 				date1 = Calendar.getInstance();
 				date1.add( Calendar.DAY_OF_MONTH, -30 );
 				date2 = Calendar.getInstance();
 				date2.add( Calendar.DAY_OF_MONTH, -60 );
 				break;
 			case _60_90:
-				queryString += "AND initialDate <= :date1 AND initialDate > :date2";
+				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
 				date1 = Calendar.getInstance();
 				date1.add( Calendar.DAY_OF_MONTH, -60 );
 				date2 = Calendar.getInstance();
 				date2.add( Calendar.DAY_OF_MONTH, -90 );
 				break;
 			case _90_N:
-				queryString += "AND initialDate <= :date1";
+				queryString += "AND s.initialDate <= :date1";
 				date1 = Calendar.getInstance();
 				date1.add( Calendar.DAY_OF_MONTH, -90 );
 				break;
@@ -117,9 +117,9 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 		}
 
 		List<SchedulingEntity> result = new ArrayList<SchedulingEntity>();
-		if ( !AbsenceTime._0.equals( absenceTime ) ) {
-			queryString += " ORDER BY initialDate ASC";
-		}
+//		if ( !AbsenceTime._0.equals( absenceTime ) ) {
+//			queryString += " ORDER BY s.initialDate ASC";
+//		}
 		q = em.createNativeQuery( queryString );
 		if ( date1 != null )
 			q.setParameter( "date1", date1.getTime(), TemporalType.DATE );
