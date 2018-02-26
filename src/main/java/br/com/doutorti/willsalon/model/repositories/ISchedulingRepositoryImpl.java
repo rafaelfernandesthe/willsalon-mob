@@ -77,14 +77,14 @@ public class ISchedulingRepositoryImpl implements ISchedulingRepositoryCustom {
 
 	@Override
 	public List<SchedulingEntity> findByAbsense( AbsenceTime absenceTime ) {
-		String queryStringMax = "SELECT sMax.fk_id_client as c,max(sMax.initialDate) as initialDate FROM Scheduling sMax GROUP BY sMax.fk_id_client";
+		String queryStringMax = "SELECT sMax.fk_id_client as c,max(sMax.initialDate) as initialDate FROM scheduling sMax GROUP BY sMax.fk_id_client";
 		String queryString = String.format( "SELECT DISTINCT s.c FROM (%s) s WHERE 1=1 ", queryStringMax );
 		Query q = null;
 		Calendar date1 = null;
 		Calendar date2 = null;
 		switch ( absenceTime ) {
 			case _0:
-				queryString = "SELECT c.pk_id_person FROM Client c WHERE c.pk_id_person NOT IN (SELECT DISTINCT s.fk_id_client FROM Scheduling s)";
+				queryString = "SELECT c.pk_id_person FROM client c WHERE c.pk_id_person NOT IN (SELECT DISTINCT s.fk_id_client FROM scheduling s)";
 				break;
 			case _15_30:
 				queryString += "AND s.initialDate <= :date1 AND s.initialDate > :date2";
