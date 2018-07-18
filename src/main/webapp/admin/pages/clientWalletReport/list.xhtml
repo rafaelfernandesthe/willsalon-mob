@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="../main.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="clientWalletReportForm">
+		
+		<p:panel id="clientWalletReportPanel" header="#{labels.client_wallet_report}">
+
+				<div class="ui-grid-row">
+					<p:outputLabel styleClass="ui-grid-col-2" for="employee" value="#{labels.employee}"/>
+					<p:selectOneMenu id="employee" value="#{clientWalletReportMB.employeeFilter}" required="true" converter="autocompleteConverter">
+						<f:selectItem value="#{null}" itemLabel="Selecione"/>
+						<f:selectItems  value="#{clientWalletReportMB.autocompleteEmployee('')}" var="item" itemValue="#{item}" itemLabel="#{item}"/>
+					</p:selectOneMenu>
+				</div>
+				
+				<div class="ui-grid-row" styleClass="inline">
+					<p:selectBooleanCheckbox styleClass="ui-grid-col-8" id="client_show_onetime" value="#{clientWalletReportMB.showOneTime}" itemLabel="#{labels.client_show_onetime}" />
+				</div>
+				
+				<p:commandButton value="Buscar" process="@form" actionListener="#{clientWalletReportMB.find}" update="clientWalletReportDataTable sumResults" ajax="true"/>
+				
+				<p:outputLabel id="sumResults" value="#{clientWalletReportMB.clientHistories.size()} Resultados"/>
+				<p:dataTable id="clientWalletReportDataTable" widgetVar="dataTable" emptyMessage="Nenhum cliente encontrado"
+					var="clientWalletReport" loadingMessage="carregando..."
+					value="#{clientWalletReportMB.clientHistories}" 
+					paginator="true" rows="20"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="20,50,100"
+					rowKey="#{clientWalletReport.id}" tableStyleClass="ui-table-columntoggle">
+
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client_name}" />
+						</f:facet>
+						<h:outputText value="#{clientWalletReport.name}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client_phone}" />
+						</f:facet>
+						<h:outputText value="#{clientWalletReport.phone}" style="font-weight: bolder;" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client_dt_ultimo_agendamento}" />
+						</f:facet>
+						<h:outputText value="#{clientWalletReport.dtUltimoAgendamento}" style="font-size: small;" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">
+							<h:outputText value="#{labels.client_qtd_agendamento}" />
+						</f:facet>
+						<h:outputText value="#{clientWalletReport.qtd}" />
+					</p:column>
+					
+				</p:dataTable>
+
+			</p:panel>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>
