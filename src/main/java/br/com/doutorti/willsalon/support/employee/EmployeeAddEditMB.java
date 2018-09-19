@@ -39,6 +39,7 @@ public class EmployeeAddEditMB extends BaseBeans {
 		logger.info( "ping" );
 		this.employee = new EmployeeEntity();
 		this.employee.setMeetByOrder( false );
+		this.employee.setActive( true );
 	}
 
 	public EmployeeEntity getEmployee() {

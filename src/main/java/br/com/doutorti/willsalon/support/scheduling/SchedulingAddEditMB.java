@@ -300,7 +300,7 @@ public class SchedulingAddEditMB extends BaseBeans {
 	}
 
 	public List<EmployeeEntity> autocompleteEmployee( String query ) {
-		return employeeRepository.findByNameContaining( query );
+		return employeeRepository.findByNameActivesContaining( query );
 	}
 
 	public SchedulingEntity getScheduling() {

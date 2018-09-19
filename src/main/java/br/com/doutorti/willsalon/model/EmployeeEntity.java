@@ -20,6 +20,9 @@ public class EmployeeEntity extends PersonEntity {
 
 	@Column(nullable = false)
 	private Boolean meetByOrder;
+	
+	@Column(nullable = false)
+	private Boolean active;
 
 	public EmployeeEntity() {
 	}
@@ -46,6 +49,14 @@ public class EmployeeEntity extends PersonEntity {
 
 	public void setMeetByOrder(Boolean meetByOrder) {
 		this.meetByOrder = meetByOrder;
+	}
+	
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 
 	@Override

@@ -55,6 +55,14 @@
 						</p:selectOneRadio>
 					</div>
 					
+					<div class="ui-grid-row">
+						<p:outputLabel styleClass="ui-grid-col-2" for="employee_active" value="#{labels.employee_active}: "/>
+						<p:selectOneRadio styleClass="ui-grid-col-2" id="employee_active" required="true" value="#{employeeAddEditMB.employee.active}">
+							<f:selectItem itemLabel="#{labels.opt_no}" itemValue="false"/>
+							<f:selectItem itemLabel="#{labels.opt_yes}" itemValue="true"/>
+						</p:selectOneRadio>
+					</div>
+					
 					<p:commandButton value="#{labels.button_save}"
 						action="list.faces" actionListener="#{employeeAddEditMB.save}"
 						style="margin: 130 auto;" ajax="false" />

@@ -144,7 +144,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 	}
 
 	public String getListEmployeeNames() {
-		String result = String.format( "(%s)", employeeRepository.getListName().toString().replaceAll( "\\[", "" ).replaceAll( "\\]", "" ) );
+		String result = String.format( "(%s)", employeeRepository.getListNameActives().toString().replaceAll( "\\[", "" ).replaceAll( "\\]", "" ) );
 		return result;
 	}
 
@@ -295,7 +295,7 @@ public class ClientSchedulingAddEditMB extends BaseBeans {
 	}
 
 	public List<EmployeeEntity> autocompleteEmployee( String query ) {
-		return employeeRepository.findByNameContaining( query );
+		return employeeRepository.findByNameActivesContaining( query );
 	}
 
 	public SchedulingEntity getScheduling() {
